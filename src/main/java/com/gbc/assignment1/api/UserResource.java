@@ -1,16 +1,13 @@
 package com.gbc.assignment1.api;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.security.auth.login.CredentialException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.gbc.assignment1.service.UserService;
 import com.gbc.assignment1.exceptions.UserAlreadyExistsException;
-import com.gbc.assignment1.models.AppUser;
 import com.gbc.assignment1.models.Recipe;
-import com.gbc.assignment1.security.TokenManager;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
