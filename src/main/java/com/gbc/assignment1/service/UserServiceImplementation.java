@@ -1,5 +1,6 @@
 package com.gbc.assignment1.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -31,20 +32,14 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void addRecipeToUser(String username, String recipename) {
-        AppUser user = _userRepo.findByUsername(username);
-        Recipe recipe = _recipeRepo.findByName(recipename);
-
+    public void addRecipeToUser(Long userId, Long recipeId) {
+        AppUser user = _userRepo.findById(userId).get();
+        Recipe recipe = _recipeRepo.findById(recipeId).get();
         user.getRecipes().add(recipe);
     }
 
     @Override
     public AppUser getUser(String username) {
         return _userRepo.findByUsername(username);
-    }
-
-    @Override
-    public List<AppUser> getUsers() {
-        return _userRepo.findAll();
     }
 }
