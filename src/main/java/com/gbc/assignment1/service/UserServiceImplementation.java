@@ -77,8 +77,7 @@ public class UserServiceImplementation implements UserService {
         }
 
         if (BCrypt.checkpw(password, user.getPassword())) {
-            TokenManager tm = new TokenManager();
-            return tm.generateJwtToken(user);
+            return TokenManager.generateJwtToken(user);
         }
 
         throw new CredentialException("Invalid Credentials");

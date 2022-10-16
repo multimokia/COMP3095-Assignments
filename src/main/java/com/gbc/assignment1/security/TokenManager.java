@@ -18,9 +18,9 @@ public class TokenManager implements Serializable {
     public static final long TOKEN_VALIDITY = 10 * 60 * 60;
 
     @Value("${secret}")
-    private String jwtSecret = "49206772696C6C20737465616B20666F72204D67A696172";
+    private static String jwtSecret = "49206772696C6C20737465616B20666F72204D67A696172";
 
-    public String generateJwtToken(AppUser user) {
+    public static String generateJwtToken(AppUser user) {
         Map<String, Object> claims = new HashMap<>();
 
         return Jwts.builder()
@@ -32,7 +32,7 @@ public class TokenManager implements Serializable {
             .compact();
     }
 
-    public Boolean validateJwtToken(String token, AppUser user) {
+    public static Boolean validateJwtToken(String token, AppUser user) {
         String username = getUsernameFromToken(token);
         Claims claims = Jwts.parser()
             .setSigningKey(jwtSecret)
@@ -44,7 +44,7 @@ public class TokenManager implements Serializable {
         return (username.equals(user.getUsername()) && !isTokenExpired);
     }
 
-    public String getUsernameFromToken(String token) {
+    public static String getUsernameFromToken(String token) {
         final Claims claims = Jwts.parser()
             .setSigningKey(jwtSecret)
             .parseClaimsJws(token)
