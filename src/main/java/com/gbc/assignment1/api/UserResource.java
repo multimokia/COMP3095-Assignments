@@ -3,13 +3,14 @@ package com.gbc.assignment1.api;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import javax.security.auth.login.CredentialException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.gbc.assignment1.service.UserService;
+import com.gbc.assignment1.exceptions.UserAlreadyExistsException;
 import com.gbc.assignment1.models.AppUser;
 import com.gbc.assignment1.models.Recipe;
 import com.gbc.assignment1.security.TokenManager;
@@ -33,43 +35,31 @@ public class UserResource {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signupUser(@RequestBody LoginUserForm form) {
-        AppUser user = _userService.getUser(form.getUsername());
+        try {
+            _userService.registerUser(form.getUsername(), form.getPassword());
+        }
 
-        //Stop if conflicting user
-        if (user != null) {
+        catch (UserAlreadyExistsException ex) {
             return new ResponseEntity<>("Conflict.", HttpStatus.CONFLICT);
         }
 
-        //Continue
-        user = new AppUser(
-            null,
-            form.getUsername(),
-            BCrypt.hashpw(form.getPassword(), BCrypt.gensalt()),
-            new ArrayList<>()
-        );
-
-        _userService.saveUser(user);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/signup").toUriString());
         return ResponseEntity.created(uri).build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginUserForm form) {
-        AppUser user = _userService.getUser(form.getUsername());
+        try {
+            String jwt = _userService.loginUser(form.getUsername(), form.getPassword());
 
-        if (user == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(new HashMap<String, Object>(){{
+                put("jwt", jwt);
+            }});
         }
 
-        if (BCrypt.checkpw(form.getPassword(), user.getPassword())) {
-            Map<String, Object> map = new HashMap<>();
-
-            TokenManager tm = new TokenManager();
-            map.put("jwt", tm.generateJwtToken(user));
-            return ResponseEntity.ok(map);
+        catch (UsernameNotFoundException | CredentialException ex) {
+            return new ResponseEntity<>("Unauthorized.", HttpStatus.UNAUTHORIZED);
         }
-
-        return new ResponseEntity<>("Unauthorized.", HttpStatus.UNAUTHORIZED);
     }
 
     @PatchMapping
