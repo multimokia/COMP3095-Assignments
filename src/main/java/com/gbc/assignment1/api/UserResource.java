@@ -5,11 +5,14 @@ import java.util.HashMap;
 
 import javax.security.auth.login.CredentialException;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,6 +20,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.gbc.assignment1.service.UserService;
 import com.gbc.assignment1.exceptions.UserAlreadyExistsException;
 import com.gbc.assignment1.formtypes.LoginUserForm;
+import com.gbc.assignment1.formtypes.UserProfileForm;
+import com.gbc.assignment1.models.AppUser;
+import com.gbc.assignment1.security.TokenManager;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +31,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserResource {
     private final UserService _userService;
+
+    private Boolean isValidJWT(String token) {
+        if (token == null) {
+            return false;
+        }
+
+        String username = TokenManager.getUsernameFromToken(token);
+        AppUser user = _userService.getUser(username);
+
+        if (user == null) {
+            return false;
+        }
+
+        return TokenManager.validateJwtToken(token, user);
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signupUser(@RequestBody LoginUserForm form) {
@@ -53,5 +74,18 @@ public class UserResource {
         catch (UsernameNotFoundException | CredentialException ex) {
             return new ResponseEntity<>("Unauthorized.", HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileForm> getProfileInfo(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        AppUser user = _userService.getUser(TokenManager.getUsernameFromToken(token));
+        return ResponseEntity.ok().body(new UserProfileForm(user.getUsername(), user.getRecipes()));
     }
 }
