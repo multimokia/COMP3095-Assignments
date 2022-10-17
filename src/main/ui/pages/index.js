@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import Image from 'next/image';
-// import styles from '../styles/Home.module.css';
 
 export default function Home() {
   return (
@@ -11,8 +10,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col items-center">
-        <div className="flex flex-col items-center justify-center w-full">
+      <main className="flex flex-col items-center relative">
+        <div className="flex flex-col items-center justify-center w-full relative">
           <h1 className="text-[4rem] pt-20">
             All<span className="text-[#0070f3]"> Recipes</span>
           </h1>

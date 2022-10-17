@@ -35,7 +35,7 @@ export async function middleware(request, response) {
       token,
       new TextEncoder().encode(process.env.SECRET_KEY)
     );
-
+    // console.log(payload);
     if (payload) {
       if (pathname.startsWith('/login') || pathname.startsWith('/register')) {
         request.nextUrl.pathname = '/';
