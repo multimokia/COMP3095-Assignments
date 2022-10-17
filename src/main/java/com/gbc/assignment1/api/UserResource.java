@@ -26,7 +26,6 @@ import com.gbc.assignment1.formtypes.LoginUserForm;
 import com.gbc.assignment1.formtypes.MealPlanForm;
 import com.gbc.assignment1.formtypes.UserProfileForm;
 import com.gbc.assignment1.models.AppUser;
-import com.gbc.assignment1.models.MealPlan;
 import com.gbc.assignment1.models.Recipe;
 import com.gbc.assignment1.security.TokenManager;
 

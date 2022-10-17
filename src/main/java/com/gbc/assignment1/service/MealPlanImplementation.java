@@ -32,7 +32,7 @@ public class MealPlanImplementation implements MealPlanService {
 
     @Override
     public MealPlan getMealPlan(Long id) {
-        return _mealplanRepo.findByMealPlanId(id);
+        return _mealplanRepo.findById(id).get();
     }
 
     @Override
