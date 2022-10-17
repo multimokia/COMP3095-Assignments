@@ -1,6 +1,7 @@
 package com.gbc.assignment1.api;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.security.auth.login.CredentialException;
@@ -17,11 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.gbc.assignment1.service.MealPlanService;
+import com.gbc.assignment1.service.RecipeService;
 import com.gbc.assignment1.service.UserService;
 import com.gbc.assignment1.exceptions.UserAlreadyExistsException;
 import com.gbc.assignment1.formtypes.LoginUserForm;
+import com.gbc.assignment1.formtypes.MealPlanForm;
 import com.gbc.assignment1.formtypes.UserProfileForm;
 import com.gbc.assignment1.models.AppUser;
+import com.gbc.assignment1.models.MealPlan;
+import com.gbc.assignment1.models.Recipe;
 import com.gbc.assignment1.security.TokenManager;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +37,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserResource {
     private final UserService _userService;
+    private final MealPlanService _mealplanService;
+    private final RecipeService _recipeService;
 
     private Boolean isValidJWT(String token) {
         if (token == null) {
@@ -87,5 +95,26 @@ public class UserResource {
 
         AppUser user = _userService.getUser(TokenManager.getUsernameFromToken(token));
         return ResponseEntity.ok().body(new UserProfileForm(user.getUsername(), user.getRecipes()));
+    }
+
+    @GetMapping("/mealplans/create")
+    public ResponseEntity<?> createMealPlan(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @RequestBody MealPlanForm form
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        Date st = new Date(form.getTimestamp());
+        AppUser user = _userService.getUser(TokenManager.getUsernameFromToken(token));
+        Recipe recipe = _recipeService.getRecipe(form.getRecipeId());
+
+        if (recipe == null) {
+            return new ResponseEntity<>("Recipe not found.", HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(_mealplanService.createMealPlan(user, recipe, st));
     }
 }

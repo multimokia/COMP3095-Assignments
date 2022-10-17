@@ -1,5 +1,7 @@
 package com.gbc.assignment1.models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,5 +31,5 @@ public class MealPlan {
     private Long recipeId;
 
     @Column(name="date")
-    private Long date;
+    private Date date;
 }
