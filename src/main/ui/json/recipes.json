@@ -1,0 +1,28 @@
+{
+  "recipes": [
+    {
+      "id": "1",
+      "name": "Turkey Burger",
+      "steps": "1. Eat. 2. Drink. 3. Sleep.",
+      "author": "Stanley"
+    },
+    {
+      "id": "2",
+      "name": "Chicken Burger",
+      "steps": "1. Eat. 2. Drink. 3. Sleep.",
+      "author": "Misty"
+    },
+    {
+      "id": "3",
+      "name": "Beef Burger",
+      "steps": "1. Eat. 2. Drink. 3. Sleep.",
+      "author": "Kim"
+    },
+    {
+      "id": "4",
+      "name": "Weed Burger",
+      "steps": "1. Eat. 2. Drink. 3. Sleep.",
+      "author": "Mehrad"
+    }
+  ]
+}

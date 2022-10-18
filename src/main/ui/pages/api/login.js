@@ -15,10 +15,14 @@ export default async function loginHandler(req, res) {
 
   res.setHeader(
     'Set-Cookie',
-    `token=${token}; path=/; expires=${new Date(
-      exp * 1000
-    ).toUTCString()}; httpOnly`
+    `token=${token}; path=/; expires=${new Date(exp * 1000).toUTCString()}; `
   );
+  // res.setHeader('Authorization', `Bearer ${token}`, {
+  //   path: '/',
+  //   expires: new Date(exp * 1000).toUTCString(),
+  //   httpOnly: true,
+  // });
+  // res.setHeader('authorization', `Bearer ${token}`);
 
   return res.status(200).json({ username, token });
 }

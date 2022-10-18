@@ -14,6 +14,12 @@ export async function middleware(request, response) {
   ) {
     return NextResponse.next();
   }
+  // const authHeader = request.headers.get('authorization');
+  // console.log('authHeader', authHeader);
+  // if (authHeader == null) {
+  //   return NextResponse.next();
+  // }
+
   const token = request.cookies.get('token');
   const url = request.url;
 

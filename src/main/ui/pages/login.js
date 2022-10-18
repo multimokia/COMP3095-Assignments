@@ -18,10 +18,11 @@ export default function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(data),
       });
 
-      const { username, token } = await res.json();
+      const { token } = await res.json();
 
       if (token) {
         const returnUrl = router.query.returnUrl || '/';
