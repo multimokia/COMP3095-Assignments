@@ -2,6 +2,8 @@ package com.gbc.assignment1.api;
 
 import java.util.List;
 
+import javax.naming.NameNotFoundException;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gbc.assignment1.formtypes.RecipeDispForm;
 import com.gbc.assignment1.formtypes.RecipeInfoForm;
 import com.gbc.assignment1.models.AppUser;
 import com.gbc.assignment1.models.Recipe;
@@ -36,7 +39,7 @@ public class RecipeResource {
         }
 
         String username = TokenManager.getUsernameFromToken(token);
-        AppUser user = _userService.getUser(username);
+        AppUser user = _userService.getUserByUsername(username);
 
         if (user == null) {
             return false;
@@ -46,7 +49,7 @@ public class RecipeResource {
     }
 
     @GetMapping("/recipes")
-    public ResponseEntity<List<Recipe>> getRecipes(
+    public ResponseEntity<List<RecipeDispForm>> getRecipes(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
         @RequestParam(required=false) String name
     ) {
@@ -60,14 +63,21 @@ public class RecipeResource {
     }
 
     @GetMapping("/recipes/{id}")
-    public ResponseEntity<Recipe> getRecipe(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id) {
+    public ResponseEntity<?> getRecipe(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id) {
         // Verify user is logged in
         if (!isValidJWT(token)) {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Unauthorized.", HttpStatus.UNAUTHORIZED);
         }
 
-        // Otherwise complete request
-        return ResponseEntity.ok(_recipeService.getRecipe(id));
+        try {
+            RecipeDispForm recipe = _recipeService.getRecipeDisp(id);
+            // Otherwise complete request
+            return ResponseEntity.ok(recipe);
+        }
+
+        catch (NameNotFoundException ex) {
+            return new ResponseEntity<>("Not found.", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/recipes/create")
@@ -84,7 +94,7 @@ public class RecipeResource {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        AppUser user = _userService.getUser(TokenManager.getUsernameFromToken(token));
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
 
         return ResponseEntity.ok(
             _recipeService.createRecipe(
