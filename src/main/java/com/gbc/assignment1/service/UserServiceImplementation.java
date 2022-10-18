@@ -1,15 +1,21 @@
 package com.gbc.assignment1.service;
 
-import java.util.List;
+import java.util.ArrayList;
 
+import javax.security.auth.login.CredentialException;
 import javax.transaction.Transactional;
 
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import com.gbc.assignment1.exceptions.UserAlreadyExistsException;
 import com.gbc.assignment1.models.AppUser;
 import com.gbc.assignment1.models.Recipe;
 import com.gbc.assignment1.repo.RecipeRepo;
 import com.gbc.assignment1.repo.UserRepo;
+import com.gbc.assignment1.security.TokenManager;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,10 +37,9 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void addRecipeToUser(String username, String recipename) {
-        AppUser user = _userRepo.findByUsername(username);
-        Recipe recipe = _recipeRepo.findByName(recipename);
-
+    public void addRecipeToUser(Long userId, Long recipeId) {
+        AppUser user = _userRepo.findById(userId).get();
+        Recipe recipe = _recipeRepo.findById(recipeId).get();
         user.getRecipes().add(recipe);
     }
 
@@ -44,7 +49,38 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public List<AppUser> getUsers() {
-        return _userRepo.findAll();
+    public void registerUser(String username, String password) throws AuthenticationException {
+        AppUser user = getUser(username);
+
+        //Stop if conflicting user
+        if (user != null) {
+            throw new UserAlreadyExistsException("User already exists.");
+        }
+
+        //Continue
+        user = new AppUser(
+            null,
+            username,
+            BCrypt.hashpw(password, BCrypt.gensalt()),
+            new ArrayList<>(),
+            new ArrayList<>()
+        );
+
+        saveUser(user);
+    }
+
+    @Override
+    public String loginUser(String username, String password) throws UsernameNotFoundException, CredentialException {
+        AppUser user = getUser(username);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found.");
+        }
+
+        if (BCrypt.checkpw(password, user.getPassword())) {
+            return TokenManager.generateJwtToken(user);
+        }
+
+        throw new CredentialException("Invalid Credentials");
     }
 }
