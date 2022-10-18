@@ -51,7 +51,7 @@ public class UserResource {
             return false;
         }
 
-        return TokenManager.validateJwtToken(token, user);
+        return TokenManager.validateJwtToken(token.replace("Bearer ", ""), user);
     }
 
     @PostMapping("/signup")
