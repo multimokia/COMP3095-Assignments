@@ -51,7 +51,9 @@ public class RecipeResource {
     @GetMapping("/recipes")
     public ResponseEntity<List<RecipeDispForm>> getRecipes(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-        @RequestParam(required=false) String name
+        @RequestParam(required=false) String name,
+        @RequestParam(required=false, defaultValue="0") int page,
+        @RequestParam(required=false, defaultValue="4") int limit
     ) {
         // Verify user is logged in
         if (!isValidJWT(token)) {
@@ -59,7 +61,11 @@ public class RecipeResource {
         }
 
         // Otherwise complete request
-        return ResponseEntity.ok(_recipeService.getRecipesByName((name != null) ? name : ""));
+        return ResponseEntity.ok(_recipeService.getRecipesByName(
+            (name != null) ? name : "",
+            page,
+            limit
+        ));
     }
 
     @GetMapping("/recipes/{id}")

@@ -12,6 +12,6 @@ public interface RecipeService {
     Recipe createRecipe(String name, String steps, AppUser author);
     Recipe getRecipe(Long recipeId) throws NameNotFoundException;
     RecipeDispForm getRecipeDisp(Long recipeId) throws NameNotFoundException;
-    List<RecipeDispForm> getRecipesByName(String name);
-    List<RecipeDispForm> getAllRecipes();
+    List<RecipeDispForm> getRecipesByName(String name, int page, int pageSize);
+    List<RecipeDispForm> getAllRecipes(int page, int pageSize);
 }

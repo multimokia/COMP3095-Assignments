@@ -6,6 +6,7 @@ import java.util.List;
 import javax.naming.NameNotFoundException;
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.gbc.assignment1.formtypes.RecipeDispForm;
@@ -78,12 +79,12 @@ public class RecipeServiceImplementation implements RecipeService {
     }
 
     @Override
-    public List<RecipeDispForm> getRecipesByName(String name) {
-        return toRecipeDispFormBulk(_recipeRepo.findByNameContains(name));
+    public List<RecipeDispForm> getRecipesByName(String name, int page, int pageSize) {
+        return toRecipeDispFormBulk(_recipeRepo.findByNameContains(name, PageRequest.of(page, pageSize)).getContent());
     }
 
     @Override
-    public List<RecipeDispForm> getAllRecipes() {
-        return toRecipeDispFormBulk(_recipeRepo.findAll());
+    public List<RecipeDispForm> getAllRecipes(int page, int pageSize) {
+        return toRecipeDispFormBulk(_recipeRepo.findAll(PageRequest.of(page, pageSize)).getContent());
     }
 }
