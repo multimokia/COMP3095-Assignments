@@ -65,7 +65,10 @@ export default function Home() {
           </div>
           <div className="recipe-container">
             {data.recipes.map((recipe) => (
-              <div className="recipe-card flex bg-gradient-to-r from-[#6EE7B7] via-[#3B82F6] to-[#9333EA] hover:cursor-pointer rounded-lg mt-10 p-1 items-center">
+              <div
+                key={recipe.id}
+                className="recipe-card flex bg-gradient-to-r from-[#6EE7B7] via-[#3B82F6] to-[#9333EA] hover:cursor-pointer rounded-lg mt-10 p-1 items-center"
+              >
                 <div className="black-background bg-black rounded-lg flex items-center py-3 px-5 w-[99.99%] justify-between">
                   <div className="recipe-card-content">
                     <h2 className=" text-xl font-bold">{recipe.name}</h2>
@@ -87,11 +90,11 @@ export default function Home() {
                             y2="7.2%"
                             id="a"
                           >
-                            <stop offset="15%" stop-color="currentColor" />
+                            <stop offset="15%" stopColor="currentColor" />
                             <stop
-                              stop-opacity="0.8"
+                              stopOpacity="0.8"
                               offset="100%"
-                              stop-color="red"
+                              stopColor="red"
                             />
                           </linearGradient>
                         </defs>
@@ -100,12 +103,12 @@ export default function Home() {
                       )}
 
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        fill-rule="evenodd"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        fillRule="evenodd"
                         fill="url(#a)"
-                        fill-opacity=".8"
-                        stroke-width="2"
+                        fillOpacity=".82"
+                        strokeWidth="1.5"
                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                       />
                     </svg>
