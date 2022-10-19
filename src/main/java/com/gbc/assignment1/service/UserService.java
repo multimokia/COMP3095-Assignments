@@ -14,5 +14,6 @@ public interface UserService {
     AppUser saveUser(AppUser user);
     Recipe saveRecipe(Recipe recipe);
     void addRecipeToUser(Long userId, Long recipeId);
-    AppUser getUser(String username);
+    AppUser getUserByUsername(String username);
+    AppUser getUser(Long id);
 }

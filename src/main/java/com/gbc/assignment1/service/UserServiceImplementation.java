@@ -44,13 +44,13 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public AppUser getUser(String username) {
+    public AppUser getUserByUsername(String username) {
         return _userRepo.findByUsername(username);
     }
 
     @Override
     public void registerUser(String username, String password) throws AuthenticationException {
-        AppUser user = getUser(username);
+        AppUser user = getUserByUsername(username);
 
         //Stop if conflicting user
         if (user != null) {
@@ -71,7 +71,7 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public String loginUser(String username, String password) throws UsernameNotFoundException, CredentialException {
-        AppUser user = getUser(username);
+        AppUser user = getUserByUsername(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found.");
@@ -82,5 +82,10 @@ public class UserServiceImplementation implements UserService {
         }
 
         throw new CredentialException("Invalid Credentials");
+    }
+
+    @Override
+    public AppUser getUser(Long id) {
+        return _userRepo.findById(id).get();
     }
 }

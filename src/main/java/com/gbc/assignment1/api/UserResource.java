@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.naming.NameNotFoundException;
 import javax.security.auth.login.CredentialException;
 
 import org.springframework.http.HttpHeaders;
@@ -45,7 +46,7 @@ public class UserResource {
         }
 
         String username = TokenManager.getUsernameFromToken(token);
-        AppUser user = _userService.getUser(username);
+        AppUser user = _userService.getUserByUsername(username);
 
         if (user == null) {
             return false;
@@ -92,7 +93,7 @@ public class UserResource {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 
-        AppUser user = _userService.getUser(TokenManager.getUsernameFromToken(token));
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
         return ResponseEntity.ok().body(new UserProfileForm(user.getUsername(), user.getRecipes()));
     }
 
@@ -107,13 +108,15 @@ public class UserResource {
         }
 
         Date st = new Date(form.getTimestamp());
-        AppUser user = _userService.getUser(TokenManager.getUsernameFromToken(token));
-        Recipe recipe = _recipeService.getRecipe(form.getRecipeId());
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
 
-        if (recipe == null) {
-            return new ResponseEntity<>("Recipe not found.", HttpStatus.NOT_FOUND);
+        try {
+            Recipe recipe = _recipeService.getRecipe(form.getRecipeId());
+            return ResponseEntity.ok(_mealplanService.createMealPlan(user, recipe, st));
         }
 
-        return ResponseEntity.ok(_mealplanService.createMealPlan(user, recipe, st));
+        catch (NameNotFoundException ex) {
+            return new ResponseEntity<>("Recipe not found.", HttpStatus.NOT_FOUND);
+        }
     }
 }
