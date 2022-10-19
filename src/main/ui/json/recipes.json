@@ -4,25 +4,29 @@
       "id": "1",
       "name": "Turkey Burger",
       "steps": "1. Eat. 2. Drink. 3. Sleep.",
-      "author": "Stanley"
+      "author": "Stanley",
+      "hearted": false
     },
     {
       "id": "2",
       "name": "Chicken Burger",
       "steps": "1. Eat. 2. Drink. 3. Sleep.",
-      "author": "Misty"
+      "author": "Misty",
+      "hearted": true
     },
     {
       "id": "3",
       "name": "Beef Burger",
       "steps": "1. Eat. 2. Drink. 3. Sleep.",
-      "author": "Kim"
+      "author": "Kim",
+      "hearted": false
     },
     {
       "id": "4",
       "name": "Weed Burger",
       "steps": "1. Eat. 2. Drink. 3. Sleep.",
-      "author": "Mehrad"
+      "author": "Mehrad",
+      "hearted": true
     }
   ]
 }

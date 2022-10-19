@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { getCookie } from 'cookies-next';
 import { useEffect } from 'react';
 
-export default function createRecipe() {
+export default function create() {
   const {
     register,
     handleSubmit,
