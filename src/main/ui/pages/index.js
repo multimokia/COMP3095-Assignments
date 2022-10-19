@@ -1,18 +1,20 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import useSWR from 'swr';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Recipe from '../components/Recipe';
 
 export default function Home() {
   const fetcher = (url) => fetch(url).then((res) => res.json());
-
-  const [limitCount, setLimitCount] = useState(4);
-
   const router = useRouter();
   const { name, limit } = router.query;
-  const filter = name ? `&name=${name}` : '';
+
+  const [limitCount, setLimitCount] = useState(4);
+  const [filter, setFilter] = useState('');
+
+  const [recipeName, setRecipeName] = useState('');
+
   const recipeLimit = limit ? `?limit=${limit}` : `?limit=${limitCount}`;
 
   //Logic for conditionally rendering the load more button
@@ -21,12 +23,12 @@ export default function Home() {
   //else show load more button
 
   const { data, error } = useSWR(
-    `/api/recipes${recipeLimit}${filter}`,
+    `/api/recipes${recipeLimit}&name=${recipeName}`,
     fetcher
   );
 
-  if (error) return <div>failed to load</div>;
-  if (!data) return <div>loading...</div>;
+  // if (error) return <div>failed to load</div>;
+  // if (!data) return <div>loading...</div>;
 
   return (
     <div>
@@ -50,7 +52,8 @@ export default function Home() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6"
+              className="w-6 h-6 hover:cursor-pointer"
+              onClick={() => console.log('test')}
             >
               <path
                 strokeLinecap="round"
@@ -75,13 +78,22 @@ export default function Home() {
                       m-0 focus:outline-none  focus-visible:ring-2  focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 bg-inherit flex-1"
               id="filter"
               placeholder="Search for a Recipe"
+              value={recipeName}
+              onChange={(e) => setRecipeName(e.target.value)}
+              onKeyDownCapture={(e) =>
+                e.key === 'Enter' ? console.log('test') : null
+              }
             ></input>
           </div>
-          <div className="recipe-container">
-            {data.recipes.map((recipe) => (
-              <Recipe key={recipe.id} recipe={recipe} />
-            ))}
-          </div>
+          {data && !error ? (
+            <div className="recipe-container">
+              {data.recipes.map((recipe) => (
+                <Recipe key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
+          ) : (
+            <div>{error}</div>
+          )}
         </div>
       </main>
     </div>
