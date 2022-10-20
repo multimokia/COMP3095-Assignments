@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gbc.assignment1.formtypes.RecipeDispForm;
 import com.gbc.assignment1.formtypes.RecipeInfoForm;
 import com.gbc.assignment1.models.AppUser;
-import com.gbc.assignment1.models.Recipe;
 import com.gbc.assignment1.security.TokenManager;
 import com.gbc.assignment1.service.RecipeService;
 import com.gbc.assignment1.service.UserService;
