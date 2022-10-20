@@ -2,15 +2,32 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import Head from 'next/head';
 import { getCookie } from 'cookies-next';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function create() {
+  const [count, setCount] = useState(1);
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
+
+  const inputs = [];
+
+  for (let i = 0; i < count; i++) {
+    // inputs.push(
+    //   <input
+    //     className="mt-5"
+    //     key={i}
+    //     id={i}
+    //     {...register(`${i}`, { required: 'Enter a value' })}
+    //     placeholder="test"
+    //   ></input>
+    // );
+    inputs.push(i);
+  }
 
   const userToken = getCookie('token');
 
@@ -21,6 +38,10 @@ export default function create() {
   // }, [userToken]);
 
   const onSubmit = async (data) => {
+    // console.log(data);
+    for (let i = 0; i < count; i++) {
+      console.log(i, data[i]);
+    }
     try {
       const res = await fetch('/api/createRecipe', {
         method: 'POST',
@@ -33,9 +54,9 @@ export default function create() {
       });
 
       const jsonData = await res.json();
-      console.log(jsonData);
+      // console.log(jsonData);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   return (
@@ -51,19 +72,44 @@ export default function create() {
             Create a <span className="text-[#0070f3]"> Recipe</span>
           </h1>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <input
-              type="text"
-              placeholder="Recipe Name"
-              {...register('name')}
-            />
-            <input
-              type="text"
-              placeholder="Recipe Steps"
-              {...register('steps')}
-            />
+          <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex">
+              <div>Name:</div>
+              <input type="text" {...register('name')}></input>
+            </div>
+            {/* <div className="mt-5 flex flex-col">{inputs}</div> */}
+            <div className="mt-5 flex flex-col">
+              {inputs.map((dontUse, idx) => (
+                <div key={idx}>
+                  <input
+                    className="mt-5"
+                    id={idx}
+                    {...register(`${idx}`, { required: 'Enter a value' })}
+                    placeholder="test"
+                  ></input>
+                  <div>{errors[idx] && <p>{errors[idx].message}</p>}</div>
+                </div>
+              ))}
+            </div>
 
-            <button type="submit">Create Recipe</button>
+            <div
+              className=" hover:cursor-pointer"
+              onClick={() => setCount(count + 1)}
+            >
+              Add Step
+            </div>
+            {count > 1 && (
+              <div
+                className=" mt-5 hover:cursor-pointer"
+                onClick={() => setCount(count - 1)}
+              >
+                Remove Step
+              </div>
+            )}
+
+            <button className="mt-10" type="submit">
+              Create Recipe
+            </button>
           </form>
         </div>
       </main>
