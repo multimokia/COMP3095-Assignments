@@ -1,5 +1,6 @@
 package com.gbc.assignment1.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,10 +8,12 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.gbc.assignment1.formtypes.MealPlanDispForm;
 import com.gbc.assignment1.models.AppUser;
 import com.gbc.assignment1.models.MealPlan;
 import com.gbc.assignment1.models.Recipe;
 import com.gbc.assignment1.repo.MealPlanRepo;
+import com.gbc.assignment1.repo.RecipeRepo;
 import com.gbc.assignment1.repo.UserRepo;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class MealPlanImplementation implements MealPlanService {
     private final UserRepo _userRepo;
+    private final RecipeRepo _recipeRepo;
     private final MealPlanRepo _mealplanRepo;
 
     @Override
@@ -37,7 +41,27 @@ public class MealPlanImplementation implements MealPlanService {
 
     @Override
     public List<MealPlan> getMealPlansWithinRange(AppUser user, Date startDate, Date endDate) {
-        return _mealplanRepo.findByUserIdAndDateBetween(user.getId(), startDate, endDate);
+        return _mealplanRepo.findAllByUserIdAndDateBetween(user.getId(), startDate, endDate);
     }
 
+    @Override
+    public List<MealPlan> getAllForUser(AppUser user) {
+        return _mealplanRepo.findAllByUserIdOrderByDateAsc(user.getId());
+    }
+
+    public List<MealPlanDispForm> getAllMealPlansForUserDisp(AppUser user) {
+        List<MealPlanDispForm> rv = new ArrayList<>();
+
+        for (MealPlan mealplan : getAllForUser(user)) {
+            Recipe recipe = _recipeRepo.findById(mealplan.getRecipeId()).get();
+
+            rv.add(new MealPlanDispForm(
+                mealplan,
+                user,
+                recipe
+            ));
+        }
+
+        return rv;
+    }
 }
