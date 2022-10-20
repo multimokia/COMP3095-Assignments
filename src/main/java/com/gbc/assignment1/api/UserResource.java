@@ -97,7 +97,7 @@ public class UserResource {
         return ResponseEntity.ok().body(new UserProfileForm(user.getUsername(), user.getRecipes()));
     }
 
-    @GetMapping("/mealplans/create")
+    @PostMapping("/mealplans/create")
     public ResponseEntity<?> createMealPlan(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
         @RequestBody MealPlanForm form
