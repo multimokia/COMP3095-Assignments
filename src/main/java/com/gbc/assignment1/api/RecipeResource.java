@@ -87,17 +87,17 @@ public class RecipeResource {
     }
 
     @PostMapping("/recipes/create")
-    public ResponseEntity<Recipe> createRecipe(
+    public ResponseEntity<?> createRecipe(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
         @RequestBody RecipeInfoForm form
     ) {
         // Verify user is logged in
         if (!isValidJWT(token)) {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Token invalid", HttpStatus.UNAUTHORIZED);
         }
 
         if (form.getName() == null || form.getSteps() == null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Recipe Name and Steps can not be empty", HttpStatus.BAD_REQUEST);
         }
 
         AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
