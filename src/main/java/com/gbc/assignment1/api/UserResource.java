@@ -97,7 +97,21 @@ public class UserResource {
         return ResponseEntity.ok().body(new UserProfileForm(user.getUsername(), user.getRecipes()));
     }
 
-    @GetMapping("/mealplans/create")
+    @GetMapping("/mealplans")
+    public ResponseEntity<?> getMealPlans(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @RequestBody MealPlanForm form
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
+        return ResponseEntity.ok(_mealplanService.getAllForUser(user));
+    }
+
+    @PostMapping("/mealplans/create")
     public ResponseEntity<?> createMealPlan(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
         @RequestBody MealPlanForm form

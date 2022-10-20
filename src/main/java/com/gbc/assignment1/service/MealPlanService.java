@@ -11,4 +11,5 @@ public interface MealPlanService {
     MealPlan createMealPlan(AppUser user, Recipe recipe, Date date);
     MealPlan getMealPlan(Long id);
     List<MealPlan> getMealPlansWithinRange(AppUser user, Date startDate, Date endDate);
+    List<MealPlan> getAllForUser(AppUser user);
 }
