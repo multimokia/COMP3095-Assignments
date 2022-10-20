@@ -40,7 +40,7 @@ export default function create() {
   const onSubmit = async (data) => {
     // console.log(data);
     for (let i = 0; i < count; i++) {
-      console.log(data[i]);
+      console.log(i, data[i]);
     }
     try {
       const res = await fetch('/api/createRecipe', {
@@ -98,6 +98,15 @@ export default function create() {
             >
               Add Step
             </div>
+            {count > 1 && (
+              <div
+                className=" mt-5 hover:cursor-pointer"
+                onClick={() => setCount(count - 1)}
+              >
+                Remove Step
+              </div>
+            )}
+
             <button className="mt-10" type="submit">
               Create Recipe
             </button>
