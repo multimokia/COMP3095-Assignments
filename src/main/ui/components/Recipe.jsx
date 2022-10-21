@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export default function Recipe({ recipe }) {
+export default function Recipe({ recipe, userId = null }) {
   const [isHearted, setIsHearted] = useState(
     'hearted' in recipe ? recipe.hearted : false
   );
@@ -9,10 +9,12 @@ export default function Recipe({ recipe }) {
 
   //use recipe.authorId to fetch author name
 
-  //fetch meals by userId, it returns a list of meals,create newArray, I then iterate over the list of meals
-  //and for each one i fetch the recipes by recipe id, and push the recipe to the newArray along with the date from the meal
-  //then i sort the newArray by date, filter out all dates prior to today,
-  //then return jsx, map over newArray and return two elements, the date (if it is different from the previous date) and the recipe
+  // make swr call with userId and recipeId to get hearted status, set isHearted to that(either gonna come back as true or false or undefined, set to false
+  // for the last 2 cases). When heart gets clicked, check state of isHearted, if true, make delete request, if false, make post request.
+
+  //in the user profile page , pass null (its a default param so just dont pass a prop for userId) for userid when displaying recipes, so that the heart doesn't show up
+
+  //view hearted recipes button == make a get request to the hearted table (many to many), get back an array of recipes, display them or false no entries returned
 
   function handleShowHeart() {
     if ('hearted' in recipe) {

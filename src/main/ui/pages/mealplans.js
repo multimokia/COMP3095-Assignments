@@ -6,15 +6,9 @@ import Recipe from '../components/Recipe';
 import moment from 'moment';
 import { Combobox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-
-const people = [
-  { id: 1, name: 'Wade Cooper' },
-  { id: 2, name: 'Arlene Mccoy' },
-  { id: 3, name: 'Devon Webb' },
-  { id: 4, name: 'Tom Cook' },
-  { id: 5, name: 'Tanya Fox' },
-  { id: 6, name: 'Hellen Schmidt' },
-];
+import DatePicker from 'react-datepicker';
+import { CalendarIcon } from '@heroicons/react/20/solid';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default function mealplans() {
   const fetcher = (url) => fetch(url).then((res) => res.json());
@@ -43,6 +37,8 @@ export default function mealplans() {
 
   const [selected, setSelected] = useState(recipes?.recipes[0]);
   const [query, setQuery] = useState('');
+  const [dateValue, setDateValue] = useState(new Date());
+  const [datePickerSelected, setDatePickerSelected] = useState(false);
 
   useEffect(() => {
     if (recipes) {
@@ -67,20 +63,27 @@ export default function mealplans() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
-    // console.log(data)
+  useEffect(() => {
+    setDatePickerSelected(false);
+  }, [dateValue]);
+
+  const onSubmit = async () => {
+    const data = {
+      recipeId: selected.id,
+      timestamp: moment(dateValue).unix(),
+    };
+    console.log(data);
 
     try {
-      const res = await fetch('/api/mealplans/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authheader,
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
-
+      // const res = await fetch('/api/mealplans/create', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     Authheader,
+      //   },
+      //   credentials: 'include',
+      //   body: JSON.stringify(data),
+      // });
       // const jsonData = await res.json();
       // console.log(jsonData);
     } catch (error) {
@@ -103,110 +106,121 @@ export default function mealplans() {
 
           <div className="w-[30rem]">
             <form className="flex flex-col " onSubmit={handleSubmit(onSubmit)}>
-              <label className="mt-8 font-bold ">Schedule your meals!</label>
-              <div
-                id="mealSelectsContainer"
-                className="mt-2 flex items-center space-x-3"
-              >
-                <div className="">Name:</div>
-                {recipes && !recipesError ? (
-                  <div className="">
-                    <Combobox value={selected} onChange={setSelected}>
-                      <div className="relative mt-1">
-                        <div className="relative w-full cursor-default overflow-hidden rounded-lg  text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-                          <Combobox.Input
-                            className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5  focus:ring-0"
-                            displayValue={(recipe) => recipe?.name}
-                            onChange={(event) => setQuery(event.target.value)}
-                          />
-                          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronUpDownIcon
-                              className="h-5 w-5 text-gray-400"
-                              aria-hidden="true"
-                            />
-                          </Combobox.Button>
-                        </div>
-                        <Transition
-                          as={Fragment}
-                          leave="transition ease-in duration-100"
-                          leaveFrom="opacity-100"
-                          leaveTo="opacity-0"
-                          afterLeave={() => setQuery('')}
-                        >
-                          <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {filteredRecipes.length === 0 && query !== '' ? (
-                              <div className="relative cursor-default select-none py-2 px-4 ">
-                                Nothing found.
-                              </div>
-                            ) : (
-                              filteredRecipes.map((recipe) => (
-                                <Combobox.Option
-                                  key={recipe.id}
-                                  className={({ active }) =>
-                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                      active
-                                        ? 'bg-teal-600 text-white'
-                                        : 'text-gray-900'
-                                    }`
-                                  }
-                                  value={recipe}
-                                >
-                                  {({ selected, active }) => (
-                                    <>
-                                      <span
-                                        className={`block truncate ${
-                                          selected
-                                            ? 'font-medium'
-                                            : 'font-normal'
-                                        }`}
-                                      >
-                                        {recipe.name}
-                                      </span>
-                                      {selected ? (
-                                        <span
-                                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                            active
-                                              ? 'text-white'
-                                              : 'text-teal-600'
-                                          }`}
-                                        >
-                                          <CheckIcon
-                                            className="h-5 w-5"
-                                            aria-hidden="true"
-                                          />
-                                        </span>
-                                      ) : null}
-                                    </>
-                                  )}
-                                </Combobox.Option>
-                              ))
-                            )}
-                          </Combobox.Options>
-                        </Transition>
+              <label className="mt-8 font-bold mb-2 ">
+                Schedule your meals!
+              </label>
+              <div className="bg-gradient-to-r from-[#94a3b8] via-[#3861a4] to-[#8c5db8] flex items-center p-1 rounded-lg">
+                <div
+                  id="mealSelectsContainer"
+                  className=" flex flex-col items-center p-2 bg-black rounded-lg w-[99.99%]"
+                >
+                  <div className="flex items-center space-x-3 p-2">
+                    <div
+                      className="flex  bg-[#a1a5b057] rounded-lg py-2.5 pl-3 pr-10 items-center sm:text-sm hover:cursor-pointer"
+                      onClick={() => setDatePickerSelected(true)}
+                    >
+                      <CalendarIcon className="h-4 pr-2 " />
+                      <DatePicker
+                        selected={dateValue}
+                        onChange={(date) => {
+                          setDateValue(date);
+                        }}
+                        open={datePickerSelected}
+                        minDate={new Date()}
+                        onClickOutside={() => setDatePickerSelected(false)}
+                      />
+                    </div>
+                    {recipes && !recipesError ? (
+                      <div className="">
+                        <Combobox value={selected} onChange={setSelected}>
+                          <div className="relative ">
+                            <div className="relative text-white w-full   hover:border-[#1e1f21cd] cursor-default overflow-hidden rounded-lg    text-left  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                              <Combobox.Input
+                                className="w-full border-none py-2.5 pl-3 pr-10 text-sm leading-5 bg-[#a1a5b057] focus:ring-0"
+                                displayValue={(recipe) => recipe?.name}
+                                onChange={(event) =>
+                                  setQuery(event.target.value)
+                                }
+                              />
+                              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                <ChevronUpDownIcon
+                                  className="h-5 w-5 text-white"
+                                  aria-hidden="true"
+                                />
+                              </Combobox.Button>
+                            </div>
+                            <Transition
+                              as={Fragment}
+                              leave="transition ease-in duration-100"
+                              leaveFrom="opacity-100"
+                              leaveTo="opacity-0"
+                              afterLeave={() => setQuery('')}
+                            >
+                              <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-[#4d4f54] py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                {filteredRecipes.length === 0 &&
+                                query !== '' ? (
+                                  <div className="relative cursor-default select-none py-2 px-4 ">
+                                    Nothing found.
+                                  </div>
+                                ) : (
+                                  filteredRecipes.map((recipe) => (
+                                    <Combobox.Option
+                                      key={recipe.id}
+                                      className={({ active }) =>
+                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                          active
+                                            ? 'bg-gradient-to-r from-[#6EE7B7] via-[#3B82F6] to-[#9333EA] text-white'
+                                            : 'text-white'
+                                        }`
+                                      }
+                                      value={recipe}
+                                    >
+                                      {({ selected, active }) => (
+                                        <>
+                                          <span
+                                            className={`block truncate ${
+                                              selected
+                                                ? 'font-medium'
+                                                : 'font-normal'
+                                            }`}
+                                          >
+                                            {recipe.name}
+                                          </span>
+                                          {selected ? (
+                                            <span
+                                              className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                                active
+                                                  ? 'text-white'
+                                                  : 'text-teal-600'
+                                              }`}
+                                            >
+                                              <CheckIcon
+                                                className="h-5 w-5"
+                                                aria-hidden="true"
+                                              />
+                                            </span>
+                                          ) : null}
+                                        </>
+                                      )}
+                                    </Combobox.Option>
+                                  ))
+                                )}
+                              </Combobox.Options>
+                            </Transition>
+                          </div>
+                        </Combobox>
                       </div>
-                    </Combobox>
+                    ) : (
+                      ''
+                    )}
                   </div>
-                ) : (
-                  ''
-                )}
-
-                {/* <input
-                  type="text"
-                  className="form-control
-                      self-start
-                      px-3
-                      py-1.5
-                      text-base
-                      font-normal
-                      text-white
-                      border border-solid border-gray-700
-                      rounded-lg
-                      transition
-                      ease-in-out
-                      m-0 focus:outline-none  focus-visible:ring-2  focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 bg-inherit flex-1"
-                  {...register('recipeName')}
-                  placeholder="Enter Recipe Name*"
-                ></input> */}
+                  <button
+                    className={`mt-3 mb-2 bg-[#0070f3] hover:bg-blue-700   text-white font-bold py-2 px-4 rounded w-[25%] `}
+                    type="submit"
+                  >
+                    Submit
+                  </button>
+                </div>
               </div>
             </form>
 
@@ -234,7 +248,7 @@ export default function mealplans() {
                 ))}
               </div>
             ) : (
-              <div className="flex mt-10 text-red-400">broken</div>
+              <div className="flex mt-10 text-red-400">error</div>
             )}
 
             {/* {errorMsg && (

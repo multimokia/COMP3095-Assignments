@@ -86,6 +86,17 @@ export default function create() {
           <h1 className="text-[4rem] pt-20">
             Create a <span className="text-[#0070f3]"> Recipe</span>
           </h1>
+          {errorMsg && (
+            <div className="mt-5 flex bg-[#c9606086] rounded-lg p-1.5 items-center justify-center">
+              <div>{errorMsg}</div>
+            </div>
+          )}
+
+          {successMsg && (
+            <div className="mt-5 flex bg-[#bbeea8ba] rounded-lg p-1.5 items-center justify-center">
+              <div>{successMsg}</div>
+            </div>
+          )}
 
           <div className="w-[30rem]">
             <form className="flex flex-col " onSubmit={handleSubmit(onSubmit)}>
@@ -201,18 +212,6 @@ export default function create() {
                 </button>
               </div>
             </form>
-
-            {errorMsg && (
-              <div className="mt-20 flex bg-[#c9606086] rounded-lg p-1 items-center justify-center">
-                <div>{errorMsg}</div>
-              </div>
-            )}
-
-            {successMsg && (
-              <div className="mt-20 flex bg-[#88c186a6] rounded-lg p-1 items-center justify-center">
-                <div>{successMsg}</div>
-              </div>
-            )}
           </div>
         </div>
       </main>
