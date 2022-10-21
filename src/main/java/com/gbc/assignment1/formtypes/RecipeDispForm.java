@@ -5,16 +5,20 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class RecipeDispForm {
+public class RecipeDispForm implements IRecipeDispForm {
     private Long id;
     private String name;
     private String steps;
     private String author;
 
-    public RecipeDispForm(Long recipeId, String name, String steps, String author) {
-        this.id = recipeId;
+    public RecipeDispForm(Long id, String name, String steps, String username) {
+        this.id = id;
         this.name = name;
         this.steps = steps;
-        this.author = author;
+        this.author = username;
+    }
+
+    public static RecipeDispForm fromObject(Object obj) {
+        return (RecipeDispForm)obj;
     }
 }

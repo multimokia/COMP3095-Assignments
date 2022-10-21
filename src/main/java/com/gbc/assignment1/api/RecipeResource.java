@@ -48,9 +48,10 @@ public class RecipeResource {
     }
 
     @GetMapping("/recipes")
-    public ResponseEntity<List<RecipeDispForm>> getRecipes(
+    public ResponseEntity<List<?>> getRecipes(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-        @RequestParam(required=false) String name,
+        @RequestParam(required=false, defaultValue="") String name,
+        @RequestParam(required=false, defaultValue="") String author,
         @RequestParam(required=false, defaultValue="0") int page,
         @RequestParam(required=false, defaultValue="4") int limit
     ) {
@@ -60,8 +61,9 @@ public class RecipeResource {
         }
 
         // Otherwise complete request
-        return ResponseEntity.ok(_recipeService.getRecipesByName(
-            (name != null) ? name : "",
+        return ResponseEntity.ok(_recipeService.getAllRecipesContainingNameAndUsername(
+            name,
+            author,
             page,
             limit
         ));

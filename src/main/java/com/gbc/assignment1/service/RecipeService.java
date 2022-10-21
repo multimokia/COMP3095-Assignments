@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.naming.NameNotFoundException;
 
+import com.gbc.assignment1.formtypes.IRecipeDispForm;
 import com.gbc.assignment1.formtypes.RecipeDispForm;
 import com.gbc.assignment1.models.AppUser;
 import com.gbc.assignment1.models.Recipe;
@@ -14,4 +15,10 @@ public interface RecipeService {
     RecipeDispForm getRecipeDisp(Long recipeId) throws NameNotFoundException;
     List<RecipeDispForm> getRecipesByName(String name, int page, int pageSize);
     List<RecipeDispForm> getAllRecipes(int page, int pageSize);
+    List<IRecipeDispForm> getAllRecipesContainingNameAndUsername(
+        String partialRecipeName,
+        String partialUserName,
+        int page,
+        int pageSize
+    );
 }
