@@ -2,7 +2,7 @@
   "mealPlans": [
     {
       "mealplanId": "1",
-      "timestamp": "1666480369",
+      "timestamp": "1666221169",
       "recipeData": {
         "recipeId": "1",
         "name": "Turkey Burger",
@@ -22,7 +22,7 @@
     },
     {
       "mealplanId": "3",
-      "timestamp": "1666739539",
+      "timestamp": "1666739569",
       "recipeData": {
         "recipeId": "3",
         "name": "Beef Burger",

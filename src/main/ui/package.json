@@ -9,8 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.3",
+    "@heroicons/react": "^2.0.12",
     "cookies-next": "^2.1.1",
     "dotenv": "^16.0.3",
+    "heroicons-react": "^1.4.1",
     "jose": "^4.10.0",
     "moment": "^2.29.4",
     "next": "12.3.1",
