@@ -92,7 +92,7 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div>{error}</div>
+            <div className="flex mt-10 text-red-400">{error}</div>
           )}
         </div>
       </main>

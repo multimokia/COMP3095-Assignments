@@ -14,7 +14,7 @@ export default function Navbar() {
             Create Recipe
           </a>
         </Link>
-        <Link href="/meal">
+        <Link href="/mealplans">
           <a className="bg-[#0070f3] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Plan Meal
           </a>

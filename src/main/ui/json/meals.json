@@ -1,0 +1,44 @@
+{
+  "mealPlans": [
+    {
+      "mealplanId": "1",
+      "timestamp": "1666480369",
+      "recipeData": {
+        "recipeId": "1",
+        "name": "Turkey Burger",
+        "steps": "This\\nis\\na\\nrecipe",
+        "author": "Stanley"
+      }
+    },
+    {
+      "mealplanId": "2",
+      "timestamp": "1666739569",
+      "recipeData": {
+        "recipeId": "2",
+        "name": "Chicken Burger",
+        "steps": "This\\nis\\na\\nrecipe",
+        "author": "Stanley"
+      }
+    },
+    {
+      "mealplanId": "3",
+      "timestamp": "1666739539",
+      "recipeData": {
+        "recipeId": "3",
+        "name": "Beef Burger",
+        "steps": "This\\nis\\na\\nrecipe",
+        "author": "Stanley"
+      }
+    },
+    {
+      "mealplanId": "4",
+      "timestamp": "1666912369",
+      "recipeData": {
+        "recipeId": "4",
+        "name": "Veggie Burger",
+        "steps": "This\\nis\\na\\nrecipe",
+        "author": "Stanley"
+      }
+    }
+  ]
+}

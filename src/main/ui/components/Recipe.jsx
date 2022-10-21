@@ -1,15 +1,28 @@
 import { useEffect, useState } from 'react';
 
 export default function Recipe({ recipe }) {
-  const [isHearted, setIsHearted] = useState(recipe.hearted);
+  const [isHearted, setIsHearted] = useState(
+    'hearted' in recipe ? recipe.hearted : false
+  );
 
   const [showHeart, setShowHeart] = useState(false);
 
+  //use recipe.authorId to fetch author name
+
+  //fetch meals by userId, it returns a list of meals,create newArray, I then iterate over the list of meals
+  //and for each one i fetch the recipes by recipe id, and push the recipe to the newArray along with the date from the meal
+  //then i sort the newArray by date, filter out all dates prior to today,
+  //then return jsx, map over newArray and return two elements, the date (if it is different from the previous date) and the recipe
+
   function handleShowHeart() {
-    setShowHeart(true);
+    if ('hearted' in recipe) {
+      setShowHeart(true);
+    }
   }
   function handleLeaveHeart() {
-    setShowHeart(false);
+    if ('hearted' in recipe) {
+      setShowHeart(false);
+    }
   }
 
   return (
