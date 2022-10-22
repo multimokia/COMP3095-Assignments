@@ -37,6 +37,9 @@ public class RecipeResource {
             return false;
         }
 
+        // Clean token
+        token = token.replaceFirst("\\s*[Bb]earer\\s*", "");
+
         String username = TokenManager.getUsernameFromToken(token);
         AppUser user = _userService.getUserByUsername(username);
 
@@ -44,7 +47,7 @@ public class RecipeResource {
             return false;
         }
 
-        return TokenManager.validateJwtToken(token.replace("Bearer ", ""), user);
+        return TokenManager.validateJwtToken(token, user);
     }
 
     @GetMapping("/recipes")
