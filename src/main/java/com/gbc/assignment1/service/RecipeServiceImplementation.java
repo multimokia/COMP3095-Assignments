@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.gbc.assignment1.formtypes.IRecipeDispForm;
 import com.gbc.assignment1.formtypes.RecipeDispForm;
 import com.gbc.assignment1.models.AppUser;
 import com.gbc.assignment1.models.Recipe;
@@ -86,5 +87,18 @@ public class RecipeServiceImplementation implements RecipeService {
     @Override
     public List<RecipeDispForm> getAllRecipes(int page, int pageSize) {
         return toRecipeDispFormBulk(_recipeRepo.findAll(PageRequest.of(page, pageSize)).getContent());
+    }
+
+    public List<IRecipeDispForm> getAllRecipesContainingNameAndUsername(
+        String partialRecipeName,
+        String partialUserName,
+        int page,
+        int pageSize
+    ) {
+        return _recipeRepo.findAllByNameContainsAndUsernameContains(
+            partialRecipeName,
+            partialUserName,
+            PageRequest.of(page, pageSize)
+        ).getContent();
     }
 }
