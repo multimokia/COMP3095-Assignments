@@ -1,6 +1,7 @@
 package com.gbc.assignment1.security;
 
 import java.io.Serializable;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class TokenManager implements Serializable {
             .setSubject(user.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
-            .signWith(SignatureAlgorithm.HS512, jwtSecret)
+            .signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encode(jwtSecret.getBytes()))
             .compact();
     }
 
@@ -37,7 +38,7 @@ public class TokenManager implements Serializable {
 
         String username = getUsernameFromToken(token);
         Claims claims = Jwts.parser()
-            .setSigningKey(jwtSecret)
+            .setSigningKey(Base64.getEncoder().encode(jwtSecret.getBytes()))
             .parseClaimsJws(token)
             .getBody();
 
@@ -51,7 +52,7 @@ public class TokenManager implements Serializable {
         token = token.replaceFirst("\\s*[Bb]earer\\s*", "");
 
         final Claims claims = Jwts.parser()
-            .setSigningKey(jwtSecret)
+            .setSigningKey(Base64.getEncoder().encode(jwtSecret.getBytes()))
             .parseClaimsJws(token)
             .getBody();
 
