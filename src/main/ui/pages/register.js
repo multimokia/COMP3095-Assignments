@@ -11,22 +11,24 @@ export default function Register() {
   } = useForm();
 
   const onSubmit = async (data) => {
+    const { username, password } = data;
+
     try {
-      const res = await fetch('/api/register', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ username, password }),
       });
-      const json = await res.json();
-      if (json === 'truth') {
-        console.log(json);
+
+      if (res.ok) {
+        //modal to say you have successfully registered
+        console.log('alll good in the hood');
         await Router.push('/login');
-      } else {
-        console.log('this is the falseddd');
       }
     } catch (error) {
+      //modal to say there was an error
       console.log(error);
     }
   };

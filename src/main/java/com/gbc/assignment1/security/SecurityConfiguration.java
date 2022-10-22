@@ -14,7 +14,8 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests()
             .antMatchers("/").permitAll()
             .and().headers().frameOptions().disable()
-            .and().csrf().disable();
+            .and().cors(cors -> cors.disable())
+            .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
