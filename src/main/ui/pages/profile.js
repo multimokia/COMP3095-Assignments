@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useSWR from 'swr';
 import Head from 'next/head';
-import Recipe from '../components/Recipe';
+import RecipeCard from '../components/RecipeCard';
 
 export default function profile() {
   const fetcher = (url) => fetch(url).then((res) => res.json());
@@ -71,7 +71,7 @@ export default function profile() {
             userRecipes && !userRecipesError ? (
               <div className="recipe-container">
                 {userRecipes.recipes.map((recipe) => (
-                  <Recipe key={recipe.id} recipe={recipe} />
+                  <RecipeCard key={recipe.recipeId} recipe={recipe} />
                 ))}
               </div>
             ) : (

@@ -6,7 +6,7 @@
       "recipeData": {
         "recipeId": "1",
         "name": "Turkey Burger",
-        "steps": "This\\nis\\na\\nrecipe",
+        "steps": "This\nis\na\nrecipe",
         "author": "Stanley"
       }
     },
@@ -16,7 +16,7 @@
       "recipeData": {
         "recipeId": "2",
         "name": "Chicken Burger",
-        "steps": "This\\nis\\na\\nrecipe",
+        "steps": "This\nis\na\nrecipe",
         "author": "Stanley"
       }
     },
@@ -26,7 +26,7 @@
       "recipeData": {
         "recipeId": "3",
         "name": "Beef Burger",
-        "steps": "This\\nis\\na\\nrecipe",
+        "steps": "This\nis\na\nrecipe",
         "author": "Stanley"
       }
     },
@@ -36,7 +36,7 @@
       "recipeData": {
         "recipeId": "4",
         "name": "Veggie Burger",
-        "steps": "This\\nis\\na\\nrecipe",
+        "steps": "This\nis\na\nrecipe",
         "author": "Stanley"
       }
     }

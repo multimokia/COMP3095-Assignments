@@ -45,7 +45,7 @@ export default function Navbar() {
           </Link>
         </div>
         <div id="logout">
-          <Link href="/logout">
+          <Link href="/api/logout">
             <a className="bg-[#0070f3] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
               Logout
             </a>

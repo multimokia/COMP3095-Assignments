@@ -1,26 +1,45 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import useSWR from 'swr';
 
-export default function Recipe({ recipe, userId = null }) {
+export default function RecipeCard({ recipe, userId = null }) {
+  const fetcher = (url) => fetch(url).then((res) => res.json());
   const [isHearted, setIsHearted] = useState(
     'hearted' in recipe ? recipe.hearted : false
   );
 
   const [showHeart, setShowHeart] = useState(false);
 
+  // console.log(recipe);
+
   //use recipe.authorId to fetch author name
 
   // make swr call with userId and recipeId to get hearted status, set isHearted to that(either gonna come back as true or false or undefined, set to false
   // for the last 2 cases). When heart gets clicked, check state of isHearted, if true, make delete request, if false, make post request.
 
+  //   const { data: heartedRecipe, error: heartedRecipeError } = useSWR(
+  //     `/api/heartedrecipes?userid=1&recipeid=1`,
+  //     fetcher
+  //   );
+
+  // const [isHearted, setIsHearted] = useState(false);
+
+  // useEffect(() => {
+  //   if (heartedRecipe) { // the check may be different, but this is the idea, if it returns a positive set it to true
+  //     setIsHearted(true);
+  //   }, [heartedRecipe]);
+
   //in the user profile page , pass null (its a default param so just dont pass a prop for userId) for userid when displaying recipes, so that the heart doesn't show up
 
   //view hearted recipes button == make a get request to the hearted table (many to many), get back an array of recipes, display them or false no entries returned
 
+  //  userId != null ,if userId is passed in, show the heart
   function handleShowHeart() {
     if ('hearted' in recipe) {
       setShowHeart(true);
     }
   }
+  // userId != null ,if userId is passed in, show the heart
   function handleLeaveHeart() {
     if ('hearted' in recipe) {
       setShowHeart(false);
@@ -29,19 +48,23 @@ export default function Recipe({ recipe, userId = null }) {
 
   return (
     <div
-      className="recipe-card flex bg-gradient-to-r from-[#6EE7B7] via-[#3B82F6] to-[#9333EA] hover:cursor-pointer rounded-lg mt-10 p-1 items-center"
+      className="recipe-card flex bg-gradient-to-r from-[#6EE7B7] via-[#3B82F6] to-[#9333EA]  rounded-lg mt-10 p-1 items-center"
       onMouseOver={() => handleShowHeart()}
       onMouseLeave={() => handleLeaveHeart()}
     >
       <div className="black-background bg-black rounded-lg flex items-center py-3 px-5 w-[99.99%] justify-between">
         <div className="recipe-card-content">
-          <h2 className=" text-xl font-bold">{recipe.name}</h2>
+          <Link href={`/recipes/${recipe.recipeId}`}>
+            <a className=" text-xl font-bold hover:cursor-pointer hover:text-blue-500">
+              {recipe.name}
+            </a>
+          </Link>
           <p>By: {recipe.author}</p>
         </div>
         {showHeart || isHearted ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-7 w-7 "
+            className="h-7 w-7 hover:cursor-pointer"
             viewBox="0 0 24 24"
             stroke="currentColor"
           >

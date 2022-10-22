@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import Head from 'next/head';
 import useSWR from 'swr';
 import { useEffect, useState, Fragment } from 'react';
-import Recipe from '../components/Recipe';
+import RecipeCard from '../components/RecipeCard';
 import moment from 'moment';
 import { Combobox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
@@ -106,7 +106,7 @@ export default function mealplans() {
 
           <div className="w-[30rem]">
             <form className="flex flex-col " onSubmit={handleSubmit(onSubmit)}>
-              <label className="mt-8 font-bold mb-2 ">
+              <label className="mt-8 font-semibold text-xl mb-2 text-center ">
                 Schedule your meals!
               </label>
               <div className="bg-gradient-to-r from-[#94a3b8] via-[#3861a4] to-[#8c5db8] flex items-center p-1 rounded-lg">
@@ -165,7 +165,7 @@ export default function mealplans() {
                                 ) : (
                                   filteredRecipes.map((recipe) => (
                                     <Combobox.Option
-                                      key={recipe.id}
+                                      key={recipe.recipeId}
                                       className={({ active }) =>
                                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
                                           active
@@ -243,7 +243,7 @@ export default function mealplans() {
                       ''
                     )}
 
-                    <Recipe recipe={recipe} />
+                    <RecipeCard recipe={recipe} />
                   </div>
                 ))}
               </div>
