@@ -1,7 +1,6 @@
 package com.gbc.assignment1.security;
 
 import java.io.Serializable;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +9,8 @@ import org.springframework.stereotype.Component;
 import com.gbc.assignment1.Assignment1Application;
 import com.gbc.assignment1.models.AppUser;
 
-import io.jsonwebtoken.Claims; import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
@@ -28,7 +28,7 @@ public class TokenManager implements Serializable {
             .setSubject(user.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
-            .signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encode(jwtSecret.getBytes()))
+            .signWith(SignatureAlgorithm.HS512, jwtSecret)
             .compact();
     }
 
@@ -38,7 +38,7 @@ public class TokenManager implements Serializable {
 
         String username = getUsernameFromToken(token);
         Claims claims = Jwts.parser()
-            .setSigningKey(Base64.getEncoder().encode(jwtSecret.getBytes()))
+            .setSigningKey(jwtSecret)
             .parseClaimsJws(token)
             .getBody();
 
@@ -52,7 +52,7 @@ public class TokenManager implements Serializable {
         token = token.replaceFirst("\\s*[Bb]earer\\s*", "");
 
         final Claims claims = Jwts.parser()
-            .setSigningKey(Base64.getEncoder().encode(jwtSecret.getBytes()))
+            .setSigningKey(jwtSecret)
             .parseClaimsJws(token)
             .getBody();
 
