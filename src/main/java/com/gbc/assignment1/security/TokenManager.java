@@ -18,7 +18,7 @@ public class TokenManager implements Serializable {
     private static final long serialVersionUID = 7008375124389347049L;
     public static final long TOKEN_VALIDITY = 10 * 60 * 60;
 
-    private static String jwtSecret;
+    private static byte[] jwtSecret;
 
     public static String generateJwtToken(AppUser user) {
         Map<String, Object> claims = new HashMap<>();
@@ -60,6 +60,11 @@ public class TokenManager implements Serializable {
     }
 
     public static void init() {
-        jwtSecret = Assignment1Application.ENV_CONF.get("SECRET_KEY");
+        try {
+            jwtSecret = Assignment1Application.ENV_CONF.get("SECRET_KEY").getBytes("UTF-8");
+        }
+        catch (Exception ex) {
+            System.out.println(ex);
+        }
     }
 }
