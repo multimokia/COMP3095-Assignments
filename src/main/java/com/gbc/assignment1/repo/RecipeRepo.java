@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.gbc.assignment1.formtypes.IRecipeDispForm;
-import com.gbc.assignment1.formtypes.RecipeDispForm;
 import com.gbc.assignment1.models.Recipe;
 
 public interface RecipeRepo extends JpaRepository<Recipe, Long> {

@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.gbc.assignment1.Assignment1Application;
 import com.gbc.assignment1.models.AppUser;
 
 import io.jsonwebtoken.Claims; import io.jsonwebtoken.Jwts;
@@ -17,8 +17,7 @@ public class TokenManager implements Serializable {
     private static final long serialVersionUID = 7008375124389347049L;
     public static final long TOKEN_VALIDITY = 10 * 60 * 60;
 
-    @Value("${secret}")
-    private static String jwtSecret = "49206772696C6C20737465616B20666F72204D67A696172";
+    private static String jwtSecret;
 
     public static String generateJwtToken(AppUser user) {
         Map<String, Object> claims = new HashMap<>();
@@ -51,5 +50,9 @@ public class TokenManager implements Serializable {
             .getBody();
 
         return claims.getSubject();
+    }
+
+    public static void init() {
+        jwtSecret = Assignment1Application.ENV_CONF.get("SECRET_KEY");
     }
 }
