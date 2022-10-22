@@ -12,6 +12,7 @@ export default function Register() {
 
   const onSubmit = async (data) => {
     const { username, password } = data;
+    // console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`);
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`, {
