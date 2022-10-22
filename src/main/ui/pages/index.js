@@ -3,7 +3,7 @@ import Image from 'next/image';
 import useSWR from 'swr';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import Recipe from '../components/Recipe';
+import RecipeCard from '../components/RecipeCard';
 
 export default function Home() {
   const fetcher = (url) => fetch(url).then((res) => res.json());
@@ -88,11 +88,11 @@ export default function Home() {
           {data && !error ? (
             <div className="recipe-container">
               {data.recipes.map((recipe) => (
-                <Recipe key={recipe.id} recipe={recipe} />
+                <RecipeCard key={recipe.recipeId} recipe={recipe} />
               ))}
             </div>
           ) : (
-            <div>{error}</div>
+            <div className="flex mt-10 text-red-400">{error}</div>
           )}
         </div>
       </main>

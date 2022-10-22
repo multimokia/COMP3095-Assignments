@@ -28,3 +28,23 @@ a {
     background: black;
   }
 }
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container,
+.react-datepicker__input-container input {
+  display: block;
+  width: 100%;
+  color: white;
+  background-color: transparent;
+  font-size: 0.875rem;
+  border: none;
+  font-family: inherit;
+}
+
+.react-datepicker {
+  border: none;
+  border-radius: none;
+}
+.react-datepicker-wrapper input[type='text'] {
+  border: none;
+}
