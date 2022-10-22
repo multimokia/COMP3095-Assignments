@@ -32,6 +32,9 @@ public class TokenManager implements Serializable {
     }
 
     public static Boolean validateJwtToken(String token, AppUser user) {
+        // Clean token
+        token = token.replaceFirst("\\s*[Bb]earer\\s*", "");
+
         String username = getUsernameFromToken(token);
         Claims claims = Jwts.parser()
             .setSigningKey(jwtSecret)
@@ -44,6 +47,9 @@ public class TokenManager implements Serializable {
     }
 
     public static String getUsernameFromToken(String token) {
+        // Clean token
+        token = token.replaceFirst("\\s*[Bb]earer\\s*", "");
+
         final Claims claims = Jwts.parser()
             .setSigningKey(jwtSecret)
             .parseClaimsJws(token)

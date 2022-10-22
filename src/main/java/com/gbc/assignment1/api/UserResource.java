@@ -45,9 +45,6 @@ public class UserResource {
             return false;
         }
 
-        // Clean token
-        token = token.replaceFirst("\\s*[Bb]earer\\s*", "");
-
         String username = TokenManager.getUsernameFromToken(token);
         AppUser user = _userService.getUserByUsername(username);
 
