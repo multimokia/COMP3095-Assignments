@@ -116,7 +116,7 @@ public class UserResource {
         }
 
         AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
-        return ResponseEntity.ok(_mealplanService.getAllForUser(user));
+        return ResponseEntity.ok(_mealplanService.getAllMealPlansForUserDisp(user));
     }
 
     @PostMapping("/mealplans/create")
