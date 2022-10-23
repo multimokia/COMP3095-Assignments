@@ -107,8 +107,7 @@ public class UserResource {
 
     @GetMapping("/mealplans")
     public ResponseEntity<?> getMealPlans(
-        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-        @RequestBody MealPlanForm form
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token
     ) {
         // Verify user is logged in
         if (!isValidJWT(token)) {
