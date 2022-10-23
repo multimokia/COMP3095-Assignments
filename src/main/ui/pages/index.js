@@ -4,16 +4,19 @@ import useSWR from 'swr';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import RecipeCard from '../components/RecipeCard';
+import { getCookie } from 'cookies-next';
 
 export default function Home() {
   const [token, setToken] = useState(null);
+  const searchRef = useRef(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let tokenJwt = document.cookie.replace(
-      /(?:(?:^|.*;\s*)jwt\s*\=\s*([^;]*).*$)|^.*$/,
-      '$1'
-    );
-    setToken(tokenJwt);
+    const jwt = getCookie('jwt');
+    if (!jwt) {
+      setError('You must be logged in to view this page');
+    }
+    setToken(jwt);
   }, []);
 
   const fetcher = async (url, token) =>
@@ -27,7 +30,6 @@ export default function Home() {
   const [filter, setFilter] = useState('');
 
   const [recipeName, setRecipeName] = useState('');
-  const [error, setError] = useState(null);
 
   const recipeLimit = limit ? `?limit=${limit}` : `?limit=${limitCount}`;
 
@@ -36,7 +38,7 @@ export default function Home() {
   // hide load more button
   //else show load more button
 
-  const { data } = useSWR(
+  const { data, error: serverError } = useSWR(
     token
       ? [
           `${process.env.NEXT_PUBLIC_API_URL}/api/recipes${recipeLimit}&name=${recipeName}`,
@@ -48,10 +50,12 @@ export default function Home() {
 
   useEffect(() => {
     if (data) {
+      console.log(data);
       if (data.error) {
+        console.log(data.error);
         setError(data.error);
       }
-      console.log('data', data);
+      searchRef.current.focus();
     }
   }, [data]);
 
@@ -145,18 +149,31 @@ export default function Home() {
                       m-0 focus:outline-none  focus-visible:ring-2  focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 bg-inherit flex-1"
               id="filter"
               placeholder="Search for a Recipe"
+              ref={searchRef}
               value={recipeName}
               onChange={(e) => setRecipeName(e.target.value)}
               onKeyDownCapture={(e) =>
-                e.key === 'Enter' ? console.log('test') : null
+                e.key === 'Enter' ? console.log('enter') : null
               }
             ></input>
           </div>
-          <div className="recipe-container">
+          <div className="recipe-container mb-10">
             {data.map((recipe) => (
-              <RecipeCard key={recipe.recipeId} recipe={recipe} />
+              <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
           </div>
+          {data.length < limitCount ? (
+            ''
+          ) : (
+            <div className="flex justify-center">
+              <button
+                className="bg-[#0070f3] text-white font-bold py-2 px-4 rounded  mb-10"
+                onClick={() => setLimitCount(limitCount + 4)}
+              >
+                Load More
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </div>

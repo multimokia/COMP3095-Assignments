@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useUserName } from '../lib/hooks';
 
 export default function Navbar() {
   const router = useRouter();

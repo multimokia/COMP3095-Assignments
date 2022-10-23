@@ -54,12 +54,12 @@ export default function RecipeCard({ recipe, userId = null }) {
     >
       <div className="black-background bg-black rounded-lg flex items-center py-3 px-5 w-[99.99%] justify-between">
         <div className="recipe-card-content">
-          <Link href={`/recipes/${recipe.recipeId}`}>
+          <Link href={`/recipes/${recipe.id}`}>
             <a className=" text-xl font-bold hover:cursor-pointer hover:text-blue-500">
-              {recipe.name}
+              {recipe.name.charAt(0).toUpperCase() + recipe.name.slice(1)}
             </a>
           </Link>
-          <p>By: {recipe.author}</p>
+          <p>By: {recipe.username}</p>
         </div>
         {showHeart || isHearted ? (
           <svg

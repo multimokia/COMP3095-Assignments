@@ -11,7 +11,7 @@ export default function create() {
   const [rName, setRname] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-
+  const isDisabled = !rName || !step1Text;
   useEffect(() => {
     if (successMsg) {
       setTimeout(() => {
@@ -41,12 +41,9 @@ export default function create() {
     inputs.push(i);
   }
 
-  const userToken = getCookie('token');
-
-  const Authheader = userToken ? { Authorization: `Bearer ${userToken}` } : {};
+  const token = getCookie('jwt');
 
   const onSubmit = async (data) => {
-    // console.log(data)
     let steps = '';
     for (let i = 0; i < count; i++) {
       steps += data[i] + '\\n';
@@ -55,20 +52,23 @@ export default function create() {
     const { recipeName } = data;
 
     try {
-      const res = await fetch('/api/createRecipe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authheader,
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/recipes/create`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name: recipeName, steps: steps }),
+        }
+      );
       // throw new Error('Testing error');
       setSuccessMsg(`${recipeName} recipe created successfully!`);
 
-      // const jsonData = await res.json();
-      // console.log(jsonData);
+      const jsonData = await res.json();
+
+      console.log(jsonData);
     } catch (error) {
       console.log(error.message);
       setErrorMsg(error.message);
@@ -206,7 +206,7 @@ export default function create() {
                       : 'bg-[#33373b] '
                   }  text-white font-bold py-2 px-4 rounded `}
                   type="submit"
-                  disabled={!step1Text && !rName}
+                  disabled={isDisabled}
                 >
                   Create Recipe
                 </button>
