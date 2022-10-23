@@ -12,6 +12,9 @@ import com.gbc.assignment1.models.AppUser;
 import com.gbc.assignment1.models.MealPlan;
 import com.gbc.assignment1.models.Recipe;
 
+import lombok.Data;
+
+@Data
 public class MealPlanDispForm {
     Long id;
     Long timestamp;
