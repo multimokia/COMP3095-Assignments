@@ -38,8 +38,10 @@ public class MealPlanImplementation implements MealPlanService {
     public MealPlan createMealPlan(AppUser user, Recipe recipe, Date date) {
         MealPlan mp = new MealPlan(null, user.getId(), recipe.getId(), date);
         user.getMealplans().add(mp);
+        _mealplanRepo.save(mp);
         _userRepo.save(user);
-        return _mealplanRepo.save(mp);
+
+        return mp;
     }
 
     @Override
