@@ -1,3 +1,11 @@
+/*
+* Project: Cookbook Webapp
+* Assignment: Assignment 1
+* Author(s): Misty D'mello
+* Student Number: 101331770
+* Date: 2022-10-23
+* Description: Meal plan interface
+*/
 package com.gbc.assignment1.service;
 
 import java.util.Date;
