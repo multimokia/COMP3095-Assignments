@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import Router from 'next/router';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Register() {
   const {
@@ -10,9 +11,10 @@ export default function Register() {
     formState: { errors },
   } = useForm();
 
+  const [error, setError] = useState(null);
+
   const onSubmit = async (data) => {
     const { username, password } = data;
-    // console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`);
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`, {
@@ -25,12 +27,12 @@ export default function Register() {
 
       if (res.ok) {
         //modal to say you have successfully registered
-        console.log('alll good in the hood');
         await Router.push('/login');
+      } else {
+        setError('Username already exists');
       }
     } catch (error) {
-      //modal to say there was an error
-      console.log(error);
+      setError(error);
     }
   };
 
@@ -62,7 +64,10 @@ export default function Register() {
             w-full "
             {...register('username', { required: true })}
           />
-          {errors.username && <span>username field is required</span>}
+          {errors.username && (
+            <span className="text-red-500 ">username field is required</span>
+          )}
+          {error !== null && <span className="text-red-500 ">{error}</span>}
           <input
             type="password"
             placeholder="Password*"
@@ -79,7 +84,9 @@ export default function Register() {
             m-0 focus:outline-none  focus-visible:ring-2  focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 bg-inherit flex-1"
             {...register('password', { required: true })}
           />
-          {errors.password && <span>password field is required</span>}
+          {errors.password && (
+            <span className="text-red-500 ">password field is required</span>
+          )}
 
           <input
             type="password"
@@ -104,7 +111,9 @@ export default function Register() {
             })}
           />
           {errors.confirmPassword && (
-            <span>{errors.confirmPassword.message}</span>
+            <span className="text-red-500 ">
+              {errors.confirmPassword.message}
+            </span>
           )}
         </div>
         <div className="flex flex-row  justify-start">

@@ -1,6 +1,16 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 export default function Navbar() {
+  const router = useRouter();
+
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'));
+  }, []);
+
   return (
     <nav className="flex justify-center items-center mt-10 mx-auto relative ">
       <div id="nav-links" className="  flex justify-center gap-11 ml-64   ">
@@ -41,7 +51,7 @@ export default function Navbar() {
             />
           </svg>
           <Link href="/profile">
-            <a>User Name</a>
+            <a>{username}</a>
           </Link>
         </div>
         <div id="logout">

@@ -17,20 +17,24 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     try {
-      const res = await fetch('/api/login', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify(data),
       });
 
-      const { token } = await res.json();
-
-      if (token) {
+      if (res.ok) {
+        const { jwt } = await res.json();
+        document.cookie = `jwt=${jwt}; path=/; expires=${new Date(
+          (Math.floor(Date.now() / 1000) + 60 * 60) * 1000
+        ).toUTCString()};`;
+        localStorage.setItem('username', data.username);
         const returnUrl = router.query.returnUrl || '/';
         router.push(returnUrl);
+      } else {
+        alert('Username or password is incorrect');
       }
     } catch (error) {
       console.log(error);

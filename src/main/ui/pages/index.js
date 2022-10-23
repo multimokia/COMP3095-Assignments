@@ -6,7 +6,20 @@ import { useRouter } from 'next/router';
 import RecipeCard from '../components/RecipeCard';
 
 export default function Home() {
-  const fetcher = (url) => fetch(url).then((res) => res.json());
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    let tokenJwt = document.cookie.replace(
+      /(?:(?:^|.*;\s*)jwt\s*\=\s*([^;]*).*$)|^.*$/,
+      '$1'
+    );
+    setToken(tokenJwt);
+  }, []);
+
+  const fetcher = async (url, token) =>
+    await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
+      (res) => res.json()
+    );
   const router = useRouter();
   const { name, limit } = router.query;
 
@@ -14,6 +27,7 @@ export default function Home() {
   const [filter, setFilter] = useState('');
 
   const [recipeName, setRecipeName] = useState('');
+  const [error, setError] = useState(null);
 
   const recipeLimit = limit ? `?limit=${limit}` : `?limit=${limitCount}`;
 
@@ -22,13 +36,66 @@ export default function Home() {
   // hide load more button
   //else show load more button
 
-  const { data, error } = useSWR(
-    `/api/recipes${recipeLimit}&name=${recipeName}`,
+  const { data } = useSWR(
+    token
+      ? [
+          `${process.env.NEXT_PUBLIC_API_URL}/api/recipes${recipeLimit}&name=${recipeName}`,
+          token,
+        ]
+      : null,
     fetcher
   );
 
-  // if (error) return <div>failed to load</div>;
-  // if (!data) return <div>loading...</div>;
+  useEffect(() => {
+    if (data) {
+      if (data.error) {
+        setError(data.error);
+      }
+      console.log('data', data);
+    }
+  }, [data]);
+
+  if (error) {
+    return (
+      <div>
+        <Head>
+          <title>Recipe App</title>
+
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+
+        <main className="flex flex-col items-center ">
+          <div className="flex flex-col items-center justify-center ">
+            <h1 className="text-[4rem] pt-20">
+              All<span className="text-[#0070f3]"> Recipes</span>
+            </h1>
+          </div>
+          <div className="w-[30rem]">{error}</div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!data && !error) {
+    return (
+      <div>
+        <Head>
+          <title>Recipe App</title>
+
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+
+        <main className="flex flex-col items-center ">
+          <div className="flex flex-col items-center justify-center ">
+            <h1 className="text-[4rem] pt-20">
+              All<span className="text-[#0070f3]"> Recipes</span>
+            </h1>
+          </div>
+          <div className="w-[30rem]">Loading...</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -85,15 +152,11 @@ export default function Home() {
               }
             ></input>
           </div>
-          {data && !error ? (
-            <div className="recipe-container">
-              {data.recipes.map((recipe) => (
-                <RecipeCard key={recipe.recipeId} recipe={recipe} />
-              ))}
-            </div>
-          ) : (
-            <div className="flex mt-10 text-red-400">{error}</div>
-          )}
+          <div className="recipe-container">
+            {data.map((recipe) => (
+              <RecipeCard key={recipe.recipeId} recipe={recipe} />
+            ))}
+          </div>
         </div>
       </main>
     </div>

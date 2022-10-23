@@ -69,10 +69,26 @@ export default function mealplans() {
 
   const onSubmit = async () => {
     const data = {
-      recipeId: selected.id,
+      recipeId: selected.recipeId,
       timestamp: moment(dateValue).unix(),
     };
     console.log(data);
+    let token = document.cookie.replace(
+      /(?:(?:^|.*;\s*)jwt\s*\=\s*([^;]*).*$)|^.*$/,
+      '$1'
+    );
+
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    // const { jwt } = await res.json();
+    // console.log(jwt);
 
     try {
       // const res = await fetch('/api/mealplans/create', {
