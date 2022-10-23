@@ -22,7 +22,7 @@ public class MealPlanDispForm {
 
     public MealPlanDispForm(MealPlan mealplan, AppUser user, Recipe recipe) {
         this.id = mealplan.getId();
-        this.timestamp = mealplan.getDate().getTime() / 1000; // Converting to time in seconds, not millis
+        this.timestamp = mealplan.getDate().getTime();
         this.recipeData = new RecipeDispForm(
             recipe.getId(),
             recipe.getName(),
