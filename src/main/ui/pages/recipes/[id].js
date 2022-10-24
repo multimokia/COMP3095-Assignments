@@ -100,13 +100,13 @@ export default function Recipe() {
               </div>
             ))}
           </div>
-          <button
+          {/* <button
             type="button"
             onClick={openModal}
             className="rounded-md bg-[#9d3a3a]  px-8 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
           >
             Delete
-          </button>
+          </button> */}
 
           <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={closeModal}>

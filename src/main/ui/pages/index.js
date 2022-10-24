@@ -75,7 +75,7 @@ export default function Home() {
     );
   }
 
-  if (!data && !error) {
+  if (!data) {
     return (
       <div>
         <Head>
