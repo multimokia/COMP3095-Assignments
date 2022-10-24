@@ -33,11 +33,6 @@ export default function Home() {
 
   const recipeLimit = limit ? `?limit=${limit}` : `?limit=${limitCount}`;
 
-  //Logic for conditionally rendering the load more button
-  //if data.recipes.length < limitCount
-  // hide load more button
-  //else show load more button
-
   const { data, error: serverError } = useSWR(
     token
       ? [
@@ -50,9 +45,9 @@ export default function Home() {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
+      // console.log(data);
       if (data.error) {
-        console.log(data.error);
+        // console.log(data.error);
         setError(data.error);
       }
       searchRef.current.focus();
@@ -158,6 +153,13 @@ export default function Home() {
             ></input>
           </div>
           <div className="recipe-container mb-10">
+            {data.length === 0 ? (
+              <div className="mt-10">
+                No Recipes Found, click on Create Recipe to get started!
+              </div>
+            ) : (
+              ''
+            )}
             {data.map((recipe) => (
               <RecipeCard key={recipe.id} recipe={recipe} />
             ))}

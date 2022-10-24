@@ -1,14 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import Head from 'next/head';
 import RecipeCard from '../components/RecipeCard';
+import { getCookie } from 'cookies-next';
 
 export default function profile() {
-  const fetcher = (url) => fetch(url).then((res) => res.json());
+  const token = getCookie('jwt');
+  const fetcher = async (url, token) =>
+    await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
+      (res) => res.json()
+    );
   const [filter, setFilter] = useState('user');
 
-  const { data: userRecipes, error: userRecipesError } = useSWR(
-    `/api/recipes?&name=stanley`,
+  // const { data, error: userRecipesError } = useSWR(
+  //   `/api/recipes?&name=stanley`,
+  //   fetcher
+  // );
+
+  const { data, error: userRecipesError } = useSWR(
+    token ? [`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, token] : null,
     fetcher
   );
 
@@ -26,6 +36,29 @@ export default function profile() {
   //in the user profile page , pass null (its a default param so just dont pass a prop for userId) for userid when displaying recipes, so that the heart doesn't show up
 
   //view hearted recipes button == make a get request to the hearted table (many to many), get back an array of recipes, display them or false no entries returned
+
+  useEffect(() => {
+    if (data && !data.error) {
+      // setSteps(recipe.steps.split('\\n'));
+    } else if (data && data.error) {
+    }
+  }, [data]);
+
+  if (data && data.error) {
+    return (
+      <div>
+        <p>{data.error}</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -68,17 +101,17 @@ export default function profile() {
           </div>
 
           {filter == 'user' ? (
-            userRecipes && !userRecipesError ? (
+            data && !userRecipesError ? (
               <div className="recipe-container">
-                {userRecipes.recipes.map((recipe) => (
-                  <RecipeCard key={recipe.recipeId} recipe={recipe} />
+                {data.recipes.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
                 ))}
               </div>
             ) : (
               <div>Error for user Recipes</div>
             )
           ) : heartedRecipes && !heartedRecipesError ? (
-            <div>Hearted Recipes</div>
+            <div>Hearted Recipes coming soon to a theatre near you...</div>
           ) : (
             <div>Error for hearted Recipes</div>
           )}

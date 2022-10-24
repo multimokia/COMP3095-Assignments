@@ -2,9 +2,11 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import Head from 'next/head';
 import { getCookie } from 'cookies-next';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 
 export default function create() {
+  const router = useRouter();
   const [count, setCount] = useState(1);
 
   const [step1Text, setStep1Text] = useState('');
@@ -12,6 +14,16 @@ export default function create() {
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const isDisabled = !rName || !step1Text;
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleSuccess = () => {
+    setIsOpen(true);
+    setTimeout(() => {
+      setIsOpen(false);
+      router.push('/');
+    }, 2000);
+  };
+
   useEffect(() => {
     if (successMsg) {
       setTimeout(() => {
@@ -46,7 +58,12 @@ export default function create() {
   const onSubmit = async (data) => {
     let steps = '';
     for (let i = 0; i < count; i++) {
-      steps += data[i] + '\\n';
+      if (i === count - 1) {
+        steps += data[i];
+      } else {
+        steps += data[i] + '\\n';
+      }
+      // steps += data[i] + '\\n';
     }
 
     const { recipeName } = data;
@@ -64,11 +81,12 @@ export default function create() {
         }
       );
       // throw new Error('Testing error');
-      setSuccessMsg(`${recipeName} recipe created successfully!`);
+      // setSuccessMsg(`${recipeName} recipe created successfully!`);
+      handleSuccess();
 
-      const jsonData = await res.json();
+      // const jsonData = await res.json();
 
-      console.log(jsonData);
+      // console.log(jsonData);
     } catch (error) {
       console.log(error.message);
       setErrorMsg(error.message);
@@ -214,6 +232,48 @@ export default function create() {
             </form>
           </div>
         </div>
+        <Transition appear show={isOpen} as={Fragment}>
+          <Dialog
+            as="div"
+            className="relative z-10"
+            onClose={() => setIsOpen(false)}
+          >
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 bg-black bg-opacity-25" />
+            </Transition.Child>
+
+            <div className="fixed inset-0 overflow-y-auto">
+              <div className="flex min-h-full items-center justify-center p-4 text-center">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
+                >
+                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-r from-[#858b99] via-[#81899c] to-[#44464d] p-6 text-left align-middle shadow-xl transition-all">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-white"
+                    >
+                      Recipe created successfully!
+                    </Dialog.Title>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </Dialog>
+        </Transition>
       </main>
     </div>
   );
