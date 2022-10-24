@@ -2,15 +2,27 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import Head from 'next/head';
 import { getCookie } from 'cookies-next';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 
 export default function create() {
+  const router = useRouter();
   const [count, setCount] = useState(1);
 
   const [step1Text, setStep1Text] = useState('');
   const [rName, setRname] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const isDisabled = !rName || !step1Text;
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleSuccess = () => {
+    setIsOpen(true);
+    setTimeout(() => {
+      setIsOpen(false);
+      router.push('/');
+    }, 2000);
+  };
 
   useEffect(() => {
     if (successMsg) {
@@ -41,33 +53,39 @@ export default function create() {
     inputs.push(i);
   }
 
-  const userToken = getCookie('token');
-
-  const Authheader = userToken ? { Authorization: `Bearer ${userToken}` } : {};
+  const token = getCookie('jwt');
 
   const onSubmit = async (data) => {
-    // console.log(data)
     let steps = '';
     for (let i = 0; i < count; i++) {
-      steps += data[i] + '\\n';
+      if (i === count - 1) {
+        steps += data[i];
+      } else {
+        steps += data[i] + '\\n';
+      }
+      // steps += data[i] + '\\n';
     }
 
     const { recipeName } = data;
 
     try {
-      const res = await fetch('/api/createRecipe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authheader,
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/recipes/create`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name: recipeName, steps: steps }),
+        }
+      );
       // throw new Error('Testing error');
-      setSuccessMsg(`${recipeName} recipe created successfully!`);
+      // setSuccessMsg(`${recipeName} recipe created successfully!`);
+      handleSuccess();
 
       // const jsonData = await res.json();
+
       // console.log(jsonData);
     } catch (error) {
       console.log(error.message);
@@ -206,7 +224,7 @@ export default function create() {
                       : 'bg-[#33373b] '
                   }  text-white font-bold py-2 px-4 rounded `}
                   type="submit"
-                  disabled={!step1Text && !rName}
+                  disabled={isDisabled}
                 >
                   Create Recipe
                 </button>
@@ -214,6 +232,48 @@ export default function create() {
             </form>
           </div>
         </div>
+        <Transition appear show={isOpen} as={Fragment}>
+          <Dialog
+            as="div"
+            className="relative z-10"
+            onClose={() => setIsOpen(false)}
+          >
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 bg-black bg-opacity-25" />
+            </Transition.Child>
+
+            <div className="fixed inset-0 overflow-y-auto">
+              <div className="flex min-h-full items-center justify-center p-4 text-center">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
+                >
+                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-r from-[#858b99] via-[#81899c] to-[#44464d] p-6 text-left align-middle shadow-xl transition-all">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-white"
+                    >
+                      Recipe created successfully!
+                    </Dialog.Title>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </Dialog>
+        </Transition>
       </main>
     </div>
   );

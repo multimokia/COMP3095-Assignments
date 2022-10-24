@@ -4,9 +4,25 @@ import useSWR from 'swr';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import RecipeCard from '../components/RecipeCard';
+import { getCookie } from 'cookies-next';
 
 export default function Home() {
-  const fetcher = (url) => fetch(url).then((res) => res.json());
+  const [token, setToken] = useState(null);
+  const searchRef = useRef(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const jwt = getCookie('jwt');
+    if (!jwt) {
+      setError('You must be logged in to view this page');
+    }
+    setToken(jwt);
+  }, []);
+
+  const fetcher = async (url, token) =>
+    await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
+      (res) => res.json()
+    );
   const router = useRouter();
   const { name, limit } = router.query;
 
@@ -17,18 +33,68 @@ export default function Home() {
 
   const recipeLimit = limit ? `?limit=${limit}` : `?limit=${limitCount}`;
 
-  //Logic for conditionally rendering the load more button
-  //if data.recipes.length < limitCount
-  // hide load more button
-  //else show load more button
-
-  const { data, error } = useSWR(
-    `/api/recipes${recipeLimit}&name=${recipeName}`,
+  const { data, error: serverError } = useSWR(
+    token
+      ? [
+          `${process.env.NEXT_PUBLIC_API_URL}/api/recipes${recipeLimit}&name=${recipeName}`,
+          token,
+        ]
+      : null,
     fetcher
   );
 
-  // if (error) return <div>failed to load</div>;
-  // if (!data) return <div>loading...</div>;
+  useEffect(() => {
+    if (data) {
+      // console.log(data);
+      if (data.error) {
+        // console.log(data.error);
+        setError(data.error);
+      }
+      searchRef.current.focus();
+    }
+  }, [data]);
+
+  if (error) {
+    return (
+      <div>
+        <Head>
+          <title>Recipe App</title>
+
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+
+        <main className="flex flex-col items-center ">
+          <div className="flex flex-col items-center justify-center ">
+            <h1 className="text-[4rem] pt-20">
+              All<span className="text-[#0070f3]"> Recipes</span>
+            </h1>
+          </div>
+          <div className="w-[30rem]">{error}</div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div>
+        <Head>
+          <title>Recipe App</title>
+
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+
+        <main className="flex flex-col items-center ">
+          <div className="flex flex-col items-center justify-center ">
+            <h1 className="text-[4rem] pt-20">
+              All<span className="text-[#0070f3]"> Recipes</span>
+            </h1>
+          </div>
+          <div className="w-[30rem]">Loading...</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -78,21 +144,37 @@ export default function Home() {
                       m-0 focus:outline-none  focus-visible:ring-2  focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 bg-inherit flex-1"
               id="filter"
               placeholder="Search for a Recipe"
+              ref={searchRef}
               value={recipeName}
               onChange={(e) => setRecipeName(e.target.value)}
               onKeyDownCapture={(e) =>
-                e.key === 'Enter' ? console.log('test') : null
+                e.key === 'Enter' ? console.log('enter') : null
               }
             ></input>
           </div>
-          {data && !error ? (
-            <div className="recipe-container">
-              {data.recipes.map((recipe) => (
-                <RecipeCard key={recipe.recipeId} recipe={recipe} />
-              ))}
-            </div>
+          <div className="recipe-container mb-10">
+            {data.length === 0 ? (
+              <div className="mt-10">
+                No Recipes Found, click on Create Recipe to get started!
+              </div>
+            ) : (
+              ''
+            )}
+            {data.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+          </div>
+          {data.length < limitCount ? (
+            ''
           ) : (
-            <div className="flex mt-10 text-red-400">{error}</div>
+            <div className="flex justify-center">
+              <button
+                className="bg-[#0070f3] text-white font-bold py-2 px-4 rounded  mb-10"
+                onClick={() => setLimitCount(limitCount + 4)}
+              >
+                Load More
+              </button>
+            </div>
           )}
         </div>
       </main>

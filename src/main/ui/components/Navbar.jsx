@@ -1,6 +1,25 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useUserName } from '../lib/hooks';
+import { getCookie, deleteCookie } from 'cookies-next';
 
 export default function Navbar() {
+  const router = useRouter();
+  const jwt = getCookie('jwt');
+
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'));
+  }, []);
+
+  const logOut = () => {
+    localStorage.removeItem('username');
+    deleteCookie('jwt');
+    router.push('/');
+  };
+
   return (
     <nav className="flex justify-center items-center mt-10 mx-auto relative ">
       <div id="nav-links" className="  flex justify-center gap-11 ml-64   ">
@@ -21,10 +40,11 @@ export default function Navbar() {
         </Link>
       </div>
 
-      <div className="flex relative ml-10 xl:left-52 lg:left-32 space-x-5  ">
+      <div className="flex items-center relative ml-10 xl:left-52 lg:left-32 space-x-5  ">
         <div
           id="icon"
           className="flex  hover:text-blue-500 hover:cursor-pointer"
+          // onClick={() => goToProfile()}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +52,7 @@ export default function Navbar() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-6 h-6 mr-1"
           >
             <path
               strokeLinecap="round"
@@ -41,15 +61,18 @@ export default function Navbar() {
             />
           </svg>
           <Link href="/profile">
-            <a>User Name</a>
+            <a>{username.charAt(0).toUpperCase() + username.slice(1)}</a>
           </Link>
         </div>
         <div id="logout">
-          <Link href="/api/logout">
-            <a className="bg-[#0070f3] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Logout
-            </a>
-          </Link>
+          {/* <Link href="/api/logout"> */}
+          <p
+            className="bg-[#0070f3] hover:bg-blue-700 hover:cursor-pointer text-white font-bold py-2 px-4 rounded"
+            onClick={() => logOut()}
+          >
+            Logout
+          </p>
+          {/* </Link> */}
         </div>
       </div>
     </nav>

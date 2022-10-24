@@ -1,3 +1,11 @@
+/*
+* Project: Cookbook Webapp
+* Assignment: Assignment 1
+* Author(s): Stanley Tsonev, Minkyu Kim, Mehrad Heidari, Misty D'mello
+* Student Number: 101339387, 101003196, 101332152, 101331770
+* Date: 2022-10-23
+* Description: JWT Token manager
+*/
 package com.gbc.assignment1.security;
 
 import java.io.Serializable;
@@ -9,7 +17,8 @@ import org.springframework.stereotype.Component;
 import com.gbc.assignment1.Assignment1Application;
 import com.gbc.assignment1.models.AppUser;
 
-import io.jsonwebtoken.Claims; import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
@@ -17,7 +26,7 @@ public class TokenManager implements Serializable {
     private static final long serialVersionUID = 7008375124389347049L;
     public static final long TOKEN_VALIDITY = 10 * 60 * 60;
 
-    private static String jwtSecret;
+    private static byte[] jwtSecret;
 
     public static String generateJwtToken(AppUser user) {
         Map<String, Object> claims = new HashMap<>();
@@ -32,6 +41,9 @@ public class TokenManager implements Serializable {
     }
 
     public static Boolean validateJwtToken(String token, AppUser user) {
+        // Clean token
+        token = token.replaceFirst("\\s*[Bb]earer\\s*", "");
+
         String username = getUsernameFromToken(token);
         Claims claims = Jwts.parser()
             .setSigningKey(jwtSecret)
@@ -44,6 +56,9 @@ public class TokenManager implements Serializable {
     }
 
     public static String getUsernameFromToken(String token) {
+        // Clean token
+        token = token.replaceFirst("\\s*[Bb]earer\\s*", "");
+
         final Claims claims = Jwts.parser()
             .setSigningKey(jwtSecret)
             .parseClaimsJws(token)
@@ -53,6 +68,11 @@ public class TokenManager implements Serializable {
     }
 
     public static void init() {
-        jwtSecret = Assignment1Application.ENV_CONF.get("SECRET_KEY");
+        try {
+            jwtSecret = Assignment1Application.ENV_CONF.get("SECRET_KEY").getBytes("UTF-8");
+        }
+        catch (Exception ex) {
+            System.out.println(ex);
+        }
     }
 }

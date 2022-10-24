@@ -1,3 +1,11 @@
+/*
+* Project: Cookbook Webapp
+* Assignment: Assignment 1
+* Author(s): Stanley Tsonev, Minkyu Kim, Mehrad Heidari, Misty D'mello
+* Student Number: 101339387, 101003196, 101332152, 101331770
+* Date: 2022-10-23
+* Description: Meal Plan implementatin
+*/
 package com.gbc.assignment1.service;
 
 import java.util.ArrayList;
@@ -30,8 +38,10 @@ public class MealPlanImplementation implements MealPlanService {
     public MealPlan createMealPlan(AppUser user, Recipe recipe, Date date) {
         MealPlan mp = new MealPlan(null, user.getId(), recipe.getId(), date);
         user.getMealplans().add(mp);
+        _mealplanRepo.save(mp);
         _userRepo.save(user);
-        return _mealplanRepo.save(mp);
+
+        return mp;
     }
 
     @Override

@@ -1,3 +1,11 @@
+/*
+* Project: Cookbook Webapp
+* Assignment: Assignment 1
+* Author(s): Stanley Tsonev, Minkyu Kim, Mehrad Heidari, Misty D'mello
+* Student Number: 101339387, 101003196, 101332152, 101331770
+* Date: 2022-10-23
+* Description: Implementation of Recipe Service
+*/
 package com.gbc.assignment1.service;
 
 import java.util.ArrayList;
@@ -96,8 +104,8 @@ public class RecipeServiceImplementation implements RecipeService {
         int pageSize
     ) {
         return _recipeRepo.findAllByNameContainsAndUsernameContains(
-            partialRecipeName,
-            partialUserName,
+            partialRecipeName.toUpperCase(),
+            partialUserName.toUpperCase(),
             PageRequest.of(page, pageSize)
         ).getContent();
     }

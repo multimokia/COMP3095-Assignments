@@ -53,13 +53,24 @@ export default function RecipeCard({ recipe, userId = null }) {
       onMouseLeave={() => handleLeaveHeart()}
     >
       <div className="black-background bg-black rounded-lg flex items-center py-3 px-5 w-[99.99%] justify-between">
-        <div className="recipe-card-content">
-          <Link href={`/recipes/${recipe.recipeId}`}>
+        <div
+          className={`${
+            recipe.username ? '' : 'flex justify-center items-center w-full'
+          }`}
+        >
+          <Link href={`/recipes/${recipe.id}`}>
             <a className=" text-xl font-bold hover:cursor-pointer hover:text-blue-500">
-              {recipe.name}
+              {recipe.name.charAt(0).toUpperCase() + recipe.name.slice(1)}
             </a>
           </Link>
-          <p>By: {recipe.author}</p>
+          <p>
+            {recipe.username
+              ? `By: ${
+                  recipe.username.charAt(0).toUpperCase() +
+                  recipe.username.slice(1)
+                }`
+              : ''}
+          </p>
         </div>
         {showHeart || isHearted ? (
           <svg

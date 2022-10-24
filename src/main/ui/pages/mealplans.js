@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import Head from 'next/head';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import { useEffect, useState, Fragment } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import moment from 'moment';
@@ -9,47 +9,68 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import DatePicker from 'react-datepicker';
 import { CalendarIcon } from '@heroicons/react/20/solid';
 import 'react-datepicker/dist/react-datepicker.css';
+import { getCookie } from 'cookies-next';
 
 export default function mealplans() {
-  const fetcher = (url) => fetch(url).then((res) => res.json());
-  const fetcher2 = (url) => fetch(url).then((res) => res.json());
+  const token = getCookie('jwt');
+  const fetcher = async (url, token) =>
+    await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
+      (res) => res.json()
+    );
 
-  const { data, error } = useSWR(`/api/mealplans`, fetcher);
+  // const { data, error } = useSWR(`/api/mealplans`, fetcher);
 
+  // const { data: recipes, error: recipesError } = useSWR(
+  //   `/api/recipes`,
+  //   fetcher
+  // );
+  // const { mutate } = useSWRConfig();
   const { data: recipes, error: recipesError } = useSWR(
-    `/api/recipes`,
-    fetcher2
+    token
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/api/recipes?limit=500`, token]
+      : null,
+    fetcher
+  );
+
+  const { data, error, mutate } = useSWR(
+    token ? [`${process.env.NEXT_PUBLIC_API_URL}/api/mealplans`, token] : null,
+    fetcher
   );
 
   let newArray = [];
 
   if (data) {
-    for (let i = 0; i < data.mealPlans.length; i++) {
-      if (moment.unix(data.mealPlans[i].timestamp).date() < moment().date()) {
+    // if (typeof data == [] && data.length == 0) {
+
+    // }
+    for (let i = 0; i < data.length; i++) {
+      if (moment(data[i].timestamp).valueOf() < moment().valueOf()) {
         continue;
       }
       newArray.push({
-        recipe: data.mealPlans[i].recipeData,
-        date: data.mealPlans[i].timestamp,
+        recipe: data[i].recipeData,
+        date: data[i].timestamp,
+        mealId: data[i].id,
       });
     }
   }
 
-  const [selected, setSelected] = useState(recipes?.recipes[0]);
+  const [selected, setSelected] = useState(null);
   const [query, setQuery] = useState('');
-  const [dateValue, setDateValue] = useState(new Date());
+  const [dateValue, setDateValue] = useState(new Date(moment().add(1, 'days')));
   const [datePickerSelected, setDatePickerSelected] = useState(false);
 
   useEffect(() => {
     if (recipes) {
-      setSelected(recipes.recipes[0]);
+      // console.log(recipes);
+      setSelected(recipes[0]);
     }
   }, [recipes]);
 
   const filteredRecipes =
     query === ''
-      ? recipes?.recipes
-      : recipes?.recipes.filter((recipe) =>
+      ? recipes
+      : recipes.filter((recipe) =>
           recipe.name
             .toLowerCase()
             .replace(/\s+/g, '')
@@ -70,26 +91,76 @@ export default function mealplans() {
   const onSubmit = async () => {
     const data = {
       recipeId: selected.id,
-      timestamp: moment(dateValue).unix(),
+      timestamp: moment(dateValue).valueOf(), //unix()
     };
-    console.log(data);
 
     try {
-      // const res = await fetch('/api/mealplans/create', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Authheader,
-      //   },
-      //   credentials: 'include',
-      //   body: JSON.stringify(data),
-      // });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/mealplans/create`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
       // const jsonData = await res.json();
       // console.log(jsonData);
+      mutate({ ...data });
     } catch (error) {
       console.log(error.message);
     }
   };
+
+  if (recipes && recipes.length == 0) {
+    return (
+      <div>
+        <Head>
+          <title>Meal Plans</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+
+        <main className="flex flex-col items-center relative">
+          <div className="flex flex-col items-center justify-center w-full relative">
+            <h1 className="text-[4rem] pt-20">
+              Meal <span className="text-[#0070f3]"> Plan</span>
+            </h1>
+
+            <div className="w-[30rem]">
+              <p className="text-center mt-5">
+                No meals found, please add a recipe to plan a meal!
+              </p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!recipes && !data) {
+    return (
+      <div>
+        <Head>
+          <title>Meal Plans</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+
+        <main className="flex flex-col items-center relative">
+          <div className="flex flex-col items-center justify-center w-full relative">
+            <h1 className="text-[4rem] pt-20">
+              Meal <span className="text-[#0070f3]"> Plan</span>
+            </h1>
+
+            <div className="w-[30rem]">
+              <p className="text-center mt-5">loading...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -126,7 +197,7 @@ export default function mealplans() {
                           setDateValue(date);
                         }}
                         open={datePickerSelected}
-                        minDate={new Date()}
+                        minDate={new Date(moment().add(1, 'days'))}
                         onClickOutside={() => setDatePickerSelected(false)}
                       />
                     </div>
@@ -137,7 +208,10 @@ export default function mealplans() {
                             <div className="relative text-white w-full   hover:border-[#1e1f21cd] cursor-default overflow-hidden rounded-lg    text-left  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                               <Combobox.Input
                                 className="w-full border-none py-2.5 pl-3 pr-10 text-sm leading-5 bg-[#a1a5b057] focus:ring-0"
-                                displayValue={(recipe) => recipe?.name}
+                                displayValue={(recipe) =>
+                                  recipe?.name.charAt(0).toUpperCase() +
+                                  recipe?.name.slice(1)
+                                }
                                 onChange={(event) =>
                                   setQuery(event.target.value)
                                 }
@@ -165,7 +239,7 @@ export default function mealplans() {
                                 ) : (
                                   filteredRecipes.map((recipe) => (
                                     <Combobox.Option
-                                      key={recipe.recipeId}
+                                      key={recipe.id}
                                       className={({ active }) =>
                                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
                                           active
@@ -184,7 +258,10 @@ export default function mealplans() {
                                                 : 'font-normal'
                                             }`}
                                           >
-                                            {recipe.name}
+                                            {recipe.name
+                                              .charAt(0)
+                                              .toUpperCase() +
+                                              recipe.name.slice(1)}
                                           </span>
                                           {selected ? (
                                             <span
@@ -226,17 +303,17 @@ export default function mealplans() {
 
             {data && !error ? (
               <div className="recipe-container">
-                {newArray.map(({ recipe, date }, idx) => (
-                  <div key={recipe.recipeId} className="flex flex-col">
+                {newArray.map(({ recipe, date, mealId }, idx) => (
+                  <div key={mealId} className="flex flex-col">
                     {idx === 0 ? (
                       <div className="text-[#9ca4ad] text-2xl mt-3">
-                        {moment.unix(date).format('MMMM Do YYYY')}
+                        {moment(date).format('MMMM Do YYYY')}
                         <hr className=""></hr>
                       </div>
-                    ) : moment.unix(newArray[idx - 1].date).date() !==
-                      moment.unix(date).date() ? (
+                    ) : moment(newArray[idx - 1].date).date() !==
+                      moment(date).date() ? (
                       <div className="text-[#9ca4ad] text-2xl mt-3">
-                        {moment.unix(date).format('MMMM Do YYYY')}
+                        {moment(date).format('MMMM Do YYYY')}
                         <hr></hr>
                       </div>
                     ) : (

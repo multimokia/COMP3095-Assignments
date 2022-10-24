@@ -2,16 +2,22 @@ import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import Head from 'next/head';
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { getCookie } from 'cookies-next';
 
 export default function Recipe() {
-  const fetcher = (url) => fetch(url).then((res) => res.json());
+  const token = getCookie('jwt');
+  const fetcher = async (url, token) =>
+    await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
+      (res) => res.json()
+    );
+
   const router = useRouter();
   const { id } = router.query;
 
-  let [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  let [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   function closeModal() {
     setIsOpen(false);
@@ -39,21 +45,37 @@ export default function Recipe() {
     }
   };
 
-  //   const { data: recipe, error: recipeError } = useSWR(`/api/recipes/${id}`, fetcher);
-  let testStr =
-    'This is the first step\nAnd this is two\nThree make some cheese please oh yeah\nFour is the last one haha or is it lol idk\nsaying hi from copilot\nai is not scary at all\nthis is the last step';
-  let stepsTest = testStr.split('\n');
+  const { data: recipe, error: recipeError } = useSWR(
+    token && id
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/api/recipes/${id}`, token]
+      : null,
+    fetcher
+  );
 
-  let steps = [];
+  const [steps, setSteps] = useState([]);
 
-  for (let i = 0; i < steps.length; i++) {
-    console.log(steps[i]);
+  useEffect(() => {
+    if (recipe && !recipe.error) {
+      setSteps(recipe.steps.split('\\n'));
+    } else if (recipe && recipe.error) {
+    }
+  }, [recipe]);
+
+  if (recipe && recipe.error) {
+    return (
+      <div>
+        <p>{recipe.error}</p>
+      </div>
+    );
   }
-  //   useEffect(() => {
-  // if(recipe) {
-  //   steps = recipe.steps.split('\n');
-  // }
-  //   }, [recipe])
+
+  if (!recipe) {
+    return (
+      <div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -61,17 +83,16 @@ export default function Recipe() {
         <title>Recipe App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1>Recipe {id}</h1>
 
       <main className="flex flex-col items-center ">
         <div className="flex flex-col items-center justify-center ">
           <h1 className="text-[4rem] pt-20 font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#8cdcbc] via-[#6287c2] to-[#b086d7]">
-            Turkey Burger {/* {recipe.name} */}
+            {recipe.name.charAt(0).toUpperCase() + recipe.name.slice(1)}
           </h1>
         </div>
         <div className="w-[30rem]">
           <div id="searchBar" className="mt-10 flex flex-col ">
-            {stepsTest.map((step, index) => (
+            {steps.map((step, index) => (
               <div className="mb-5 " key={index}>
                 <p className="text-xl">
                   {index + 1}. {step}
@@ -79,13 +100,13 @@ export default function Recipe() {
               </div>
             ))}
           </div>
-          <button
+          {/* <button
             type="button"
             onClick={openModal}
             className="rounded-md bg-[#9d3a3a]  px-8 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
           >
             Delete
-          </button>
+          </button> */}
 
           <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={closeModal}>

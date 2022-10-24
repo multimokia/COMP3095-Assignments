@@ -19,9 +19,13 @@ export async function middleware(request, response) {
   // if (authHeader == null) {
   //   return NextResponse.next();
   // }
+  const token = request.cookies.get('jwt');
 
-  const token = request.cookies.get('token');
   const url = request.url;
+  // console.log('UTF-8', new TextEncoder().encode(process.env.SECRET_KEY));
+  // const pwUtf8 = new TextEncoder().encode(process.env.SECRET_KEY);
+  // const pwHash = await crypto.subtle.digest('SHA-512', pwUtf8);
+  // console.log('pwHash', pwHash);
 
   if (
     token == undefined &&
@@ -41,8 +45,9 @@ export async function middleware(request, response) {
       token,
       new TextEncoder().encode(process.env.SECRET_KEY)
     );
-    // console.log(payload);
+
     if (payload) {
+      request.user = payload.sub;
       if (pathname.startsWith('/login') || pathname.startsWith('/register')) {
         request.nextUrl.pathname = '/';
         return NextResponse.redirect(request.nextUrl);

@@ -1,3 +1,11 @@
+/*
+* Project: Cookbook Webapp
+* Assignment: Assignment 1
+* Author(s): Stanley Tsonev, Minkyu Kim, Mehrad Heidari, Misty D'mello
+* Student Number: 101339387, 101003196, 101332152, 101331770
+* Date: 2022-10-23
+* Description: Endpoint for users
+*/
 package com.gbc.assignment1.api;
 
 import java.net.URI;
@@ -44,9 +52,6 @@ public class UserResource {
         if (token == null) {
             return false;
         }
-
-        // Clean token
-        token = token.replaceFirst("\\s*[Bb]earer\\s*", "");
 
         String username = TokenManager.getUsernameFromToken(token);
         AppUser user = _userService.getUserByUsername(username);
@@ -102,8 +107,7 @@ public class UserResource {
 
     @GetMapping("/mealplans")
     public ResponseEntity<?> getMealPlans(
-        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-        @RequestBody MealPlanForm form
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token
     ) {
         // Verify user is logged in
         if (!isValidJWT(token)) {
@@ -111,7 +115,7 @@ public class UserResource {
         }
 
         AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
-        return ResponseEntity.ok(_mealplanService.getAllForUser(user));
+        return ResponseEntity.ok(_mealplanService.getAllMealPlansForUserDisp(user));
     }
 
     @PostMapping("/mealplans/create")
