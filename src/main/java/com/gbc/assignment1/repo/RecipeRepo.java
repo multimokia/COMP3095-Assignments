@@ -23,8 +23,8 @@ public interface RecipeRepo extends JpaRepository<Recipe, Long> {
     Page<Recipe> findByNameContains(String name, Pageable pageable);
 
     @Query(
-        value="SELECT RECIPES.ID, RECIPES.NAME, RECIPES.STEPS, USERS.USERNAME FROM RECIPES INNER JOIN USERS ON USERS.USER_ID=RECIPES.AUTHOR_ID WHERE RECIPES.NAME LIKE %:rNameFlt% AND USERS.USERNAME LIKE %:uNameFlt%",
-        countQuery="SELECT count(*) FROM RECIPES INNER JOIN USERS ON USERS.USER_ID=RECIPES.AUTHOR_ID WHERE RECIPES.NAME LIKE %:rNameFlt% AND USERS.USERNAME LIKE %:uNameFlt%",
+        value="SELECT RECIPES.ID, RECIPES.NAME, RECIPES.STEPS, USERS.USERNAME FROM RECIPES INNER JOIN USERS ON USERS.USER_ID=RECIPES.AUTHOR_ID WHERE upper(RECIPES.NAME) LIKE %:rNameFlt% AND upper(USERS.USERNAME) LIKE %:uNameFlt%",
+        countQuery="SELECT count(*) FROM RECIPES INNER JOIN USERS ON USERS.USER_ID=RECIPES.AUTHOR_ID WHERE upper(RECIPES.NAME) LIKE %:rNameFlt% AND upper(USERS.USERNAME) LIKE %:uNameFlt%",
         nativeQuery=true
     )
     Page<IRecipeDispForm> findAllByNameContainsAndUsernameContains(@Param("rNameFlt") String rNameFlt, @Param("uNameFlt") String uNameFlt, Pageable pageable);

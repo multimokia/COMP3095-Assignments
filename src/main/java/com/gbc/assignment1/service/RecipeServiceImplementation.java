@@ -104,8 +104,8 @@ public class RecipeServiceImplementation implements RecipeService {
         int pageSize
     ) {
         return _recipeRepo.findAllByNameContainsAndUsernameContains(
-            partialRecipeName,
-            partialUserName,
+            partialRecipeName.toUpperCase(),
+            partialUserName.toUpperCase(),
             PageRequest.of(page, pageSize)
         ).getContent();
     }
