@@ -58,7 +58,7 @@ public class RecipeServiceImplementation implements RecipeService {
 
     @Override
     public Recipe createRecipe(String name, String steps, AppUser author) {
-        Recipe recipe = new Recipe(null, name, author.getId(), steps);
+        Recipe recipe = new Recipe(null, name, author.getId(), steps); //TODO: Add props related to new recipe params
         author.getRecipes().add(recipe);
 
         _recipeRepo.save(recipe);

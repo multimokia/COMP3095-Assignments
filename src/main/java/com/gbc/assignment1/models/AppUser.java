@@ -48,4 +48,8 @@ public class AppUser {
     @OneToMany
     @Column(name="mealplans")
     private Collection<MealPlan> mealplans = new ArrayList<>();
+
+    @OneToMany
+    @Column(name="favorites")
+    private Collection<Recipe> favorites = new ArrayList<>();
 }
