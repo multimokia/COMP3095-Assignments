@@ -233,6 +233,34 @@ public class UserResource {
         }
     }
 
+    @PutMapping("/mealplans/{id}")
+    public ResponseEntity<?> modifyMealPlan(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @PathVariable Long id,
+        @RequestBody MealPlanForm form
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        Date st = new Date(form.getTimestamp());
+
+        try {
+            Recipe recipe = _recipeService.getRecipe(form.getRecipeId());
+            MealPlan mealplan = _mealplanService.getMealPlan(id);
+
+            mealplan.setDate(st);
+            mealplan.setRecipeId(recipe.getId());
+            mealplan.setEventName(form.getEventName());
+            return ResponseEntity.ok(_mealplanService.saveMealPlan(mealplan));
+        }
+
+        catch (NameNotFoundException ex) {
+            return new ResponseEntity<>("Not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @DeleteMapping("/mealplans/{id}")
     public ResponseEntity<?> deleteMealPlan(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,

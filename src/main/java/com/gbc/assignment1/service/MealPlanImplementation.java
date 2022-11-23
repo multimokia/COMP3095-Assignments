@@ -63,6 +63,11 @@ public class MealPlanImplementation implements MealPlanService {
     }
 
     @Override
+    public MealPlan saveMealPlan(MealPlan mealplan) {
+        return _mealplanRepo.save(mealplan);
+    }
+
+    @Override
     public MealPlan getMealPlan(Long id) {
         return _mealplanRepo.findById(id).get();
     }
