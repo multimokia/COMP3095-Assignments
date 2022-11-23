@@ -45,6 +45,24 @@ public class MealPlanImplementation implements MealPlanService {
     }
 
     @Override
+    public MealPlan deleteMealPlan(AppUser user, Long mealplanId) {
+        MealPlan toDelete = null;
+        for (MealPlan mp : user.getMealplans()) {
+            if (mp.getId() == mealplanId) {
+                toDelete = mp;
+                break;
+            }
+        }
+
+        if (toDelete != null) {
+            user.getMealplans().remove(toDelete);
+            _mealplanRepo.delete(toDelete);
+        }
+
+        return toDelete;
+    }
+
+    @Override
     public MealPlan getMealPlan(Long id) {
         return _mealplanRepo.findById(id).get();
     }
@@ -59,6 +77,7 @@ public class MealPlanImplementation implements MealPlanService {
         return _mealplanRepo.findAllByUserIdOrderByDateAsc(user.getId());
     }
 
+    @Override
     public List<MealPlanDispForm> getAllMealPlansForUserDisp(AppUser user) {
         List<MealPlanDispForm> rv = new ArrayList<>();
 
@@ -75,6 +94,7 @@ public class MealPlanImplementation implements MealPlanService {
         return rv;
     }
 
+    @Override
     public List<MealPlanDispForm> getAllEventsForUserdisp(AppUser user) {
         List<MealPlanDispForm> rv = new ArrayList<>();
 

@@ -39,6 +39,7 @@ import com.gbc.assignment1.formtypes.LoginUserForm;
 import com.gbc.assignment1.formtypes.MealPlanForm;
 import com.gbc.assignment1.formtypes.UserProfileForm;
 import com.gbc.assignment1.models.AppUser;
+import com.gbc.assignment1.models.MealPlan;
 import com.gbc.assignment1.models.Recipe;
 import com.gbc.assignment1.security.TokenManager;
 
@@ -230,6 +231,25 @@ public class UserResource {
         catch (NameNotFoundException ex) {
             return new ResponseEntity<>("Recipe not found.", HttpStatus.NOT_FOUND);
         }
+    }
+
+    @DeleteMapping("/mealplans/{id}")
+    public ResponseEntity<?> deleteMealPlan(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @PathVariable Long id
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
+        MealPlan rv = _mealplanService.deleteMealPlan(user, id);
+
+        if (rv != null) {
+            return ResponseEntity.ok(rv);
+        }
+        return new ResponseEntity<>("Mealplan not found.", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/events")
