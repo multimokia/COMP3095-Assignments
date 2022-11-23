@@ -35,8 +35,8 @@ public class MealPlanImplementation implements MealPlanService {
     private final MealPlanRepo _mealplanRepo;
 
     @Override
-    public MealPlan createMealPlan(AppUser user, Recipe recipe, Date date) {
-        MealPlan mp = new MealPlan(null, user.getId(), recipe.getId(), date);
+    public MealPlan createMealPlan(AppUser user, Recipe recipe, Date date, String eventName) {
+        MealPlan mp = new MealPlan(null, user.getId(), recipe.getId(), date, eventName);
         user.getMealplans().add(mp);
         _mealplanRepo.save(mp);
         _userRepo.save(user);
@@ -70,6 +70,24 @@ public class MealPlanImplementation implements MealPlanService {
                 user,
                 recipe
             ));
+        }
+
+        return rv;
+    }
+
+    public List<MealPlanDispForm> getAllEventsForUserdisp(AppUser user) {
+        List<MealPlanDispForm> rv = new ArrayList<>();
+
+        for (MealPlan mealplan : getAllForUser(user)) {
+            Recipe recipe = _recipeRepo.findById(mealplan.getRecipeId()).get();
+
+            if (mealplan.getEventName() != null) {
+                rv.add(new MealPlanDispForm(
+                    mealplan,
+                    user,
+                    recipe
+                ));
+            }
         }
 
         return rv;

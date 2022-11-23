@@ -224,11 +224,25 @@ public class UserResource {
 
         try {
             Recipe recipe = _recipeService.getRecipe(form.getRecipeId());
-            return ResponseEntity.ok(_mealplanService.createMealPlan(user, recipe, st));
+            return ResponseEntity.ok(_mealplanService.createMealPlan(user, recipe, st, form.getEventName()));
         }
 
         catch (NameNotFoundException ex) {
             return new ResponseEntity<>("Recipe not found.", HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/events")
+    public ResponseEntity<?> getEvents(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
+
+        return ResponseEntity.ok(_mealplanService.getAllEventsForUserdisp(user));
     }
 }

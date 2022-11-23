@@ -18,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import io.micrometer.core.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,4 +42,8 @@ public class MealPlan {
 
     @Column(name="date")
     private Date date;
+
+    @Nullable
+    @Column(name="eventName", nullable=true)
+    private String eventName;
 }
