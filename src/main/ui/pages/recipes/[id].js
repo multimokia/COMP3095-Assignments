@@ -91,6 +91,41 @@ export default function Recipe() {
           </h1>
         </div>
         <div className="w-[30rem]">
+          <div
+            id="ingredients"
+            className="mt-10 flex flex-col items-center justify-center space-x-3"
+          >
+            <div className="font-semibold text-2xl">Ingredients</div>
+            <div
+              className="
+                      mt-5
+                      px-5
+                      py-4
+                      text-base
+                      font-normal
+                      text-white
+                      border border-solid border-gray-700
+                      rounded-lg
+                      transition
+                      ease-in-out
+                      bg-inherit flex-1 w-full"
+            >
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
+                  <div>1 Tbs of Mazier piss</div>
+                </div>
+                <div className="flex items-center">
+                  <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
+                  <div>3 Chickens</div>
+                </div>
+                <div className="flex items-center">
+                  <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
+                  <div>1 Weed</div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div id="searchBar" className="mt-10 flex flex-col ">
             {steps.map((step, index) => (
               <div className="mb-5 " key={index}>

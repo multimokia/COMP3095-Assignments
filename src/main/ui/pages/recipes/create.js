@@ -5,9 +5,10 @@ import { getCookie } from 'cookies-next';
 import { useEffect, useState, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export default function create() {
+export default function Create() {
   const router = useRouter();
   const [count, setCount] = useState(1);
+  const [ingredientCount, setIngredientCount] = useState(1);
 
   const [step1Text, setStep1Text] = useState('');
   const [rName, setRname] = useState('');
@@ -48,24 +49,54 @@ export default function create() {
   } = useForm();
 
   const inputs = [];
+  const ingredients = [];
 
   for (let i = 0; i < count; i++) {
     inputs.push(i);
   }
 
+  for (let i = 0; i < ingredientCount; i++) {
+    ingredients.push(i);
+  }
+
   const token = getCookie('jwt');
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setIngredientCount(ingredientCount + 1);
+    }
+  };
+
   const onSubmit = async (data) => {
+    console.log(data);
     let steps = '';
     for (let i = 0; i < count; i++) {
       if (i === count - 1) {
-        steps += data[i];
+        if (data[`s${i}`]) {
+          steps += data[`s${i}`];
+        }
       } else {
-        steps += data[i] + '\\n';
+        if (data[`s${i}`]) {
+          steps += data[`s${i}`] + '\\n';
+        }
       }
-      // steps += data[i] + '\\n';
     }
 
+    let ingredients = '';
+    for (let i = 0; i < ingredientCount; i++) {
+      if (i === ingredientCount - 1) {
+        if (data[`i${i}`]) {
+          ingredients += data[`i${i}`];
+        }
+      } else {
+        if (data[`i${i}`]) {
+          ingredients += data[`i${i}`] + '\\n';
+        }
+      }
+    }
+    console.log(ingredients);
+    return;
     const { recipeName } = data;
 
     try {
@@ -144,11 +175,57 @@ export default function create() {
                 ></input>
               </div>
 
+              <div
+                id="ingredients"
+                className="mt-10 flex flex-col items-center justify-center space-x-3"
+              >
+                <div className="font-semibold text-2xl">Ingredients</div>
+                <div
+                  className="
+                      mt-5
+                      px-5
+                      py-4
+                      text-base
+                      font-normal
+                      text-white
+                      border border-solid border-gray-700
+                      rounded-lg
+                      transition
+                      ease-in-out
+                      bg-inherit flex-1 w-full"
+                >
+                  <div className="">
+                    {ingredients.map((i, idx) => (
+                      <div className="flex items-center" key={idx}>
+                        <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
+                        <input
+                          className="
+                            px-1
+                            bg-inherit flex-1 w-full
+                            focus:outline-none "
+                          onKeyDown={handleKeyDown}
+                          {...register(`i${idx}`)}
+                          placeholder="Click here to add an ingredient"
+                        ></input>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border border-gray-700 border-b-1 mt-2 ">
+                    {' '}
+                    {''}
+                  </div>
+                  <div className="border border-gray-700 border-b-1 mt-5 ">
+                    {' '}
+                    {''}
+                  </div>
+                </div>
+              </div>
+
               <div id="stepsContainer" className="">
                 {inputs.map((dontUse, idx) => (
                   <div
                     key={idx}
-                    className="mt-7 flex flex-col bg-gradient-to-r from-[#515055] via-[#676d76] to-[#9393a2]   rounded-lg p-1 items-center"
+                    className="mt-10 flex flex-col bg-gradient-to-r from-[#515055] via-[#676d76] to-[#9393a2]   rounded-lg p-1 items-center"
                   >
                     <div className="black-background opacity-95 bg-black rounded-lg flex items-center pt-3 pb-6  px-5 w-[99.99%] justify-between">
                       <div className="flex flex-col flex-1 ">
@@ -156,7 +233,7 @@ export default function create() {
                         <input
                           className="mt-1 rounded-lg p-1 pl-2.5 bg-inherit border border-gray-700 focus:outline-none  focus-visible:ring-2  focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 w-[95%]  "
                           id={idx}
-                          {...register(`${idx}`, {
+                          {...register(`s${idx}`, {
                             required: `Enter a value for step ${idx + 1}`,
                           })}
                           placeholder={
