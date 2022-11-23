@@ -70,6 +70,7 @@ public class UserServiceImplementation implements UserService {
             null,
             username,
             BCrypt.hashpw(password, BCrypt.gensalt()),
+            null,
             new ArrayList<>(),
             new ArrayList<>(),
             new ArrayList<>()

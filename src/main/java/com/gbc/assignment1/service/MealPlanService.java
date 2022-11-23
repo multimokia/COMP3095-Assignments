@@ -17,9 +17,12 @@ import com.gbc.assignment1.models.MealPlan;
 import com.gbc.assignment1.models.Recipe;
 
 public interface MealPlanService {
-    MealPlan createMealPlan(AppUser user, Recipe recipe, Date date);
+    MealPlan createMealPlan(AppUser user, Recipe recipe, Date date, String eventName);
+    MealPlan deleteMealPlan(AppUser user, Long mealplanId);
     MealPlan getMealPlan(Long id);
+    MealPlan saveMealPlan(MealPlan mealplan);
     List<MealPlan> getMealPlansWithinRange(AppUser user, Date startDate, Date endDate);
     List<MealPlan> getAllForUser(AppUser user);
-    public List<MealPlanDispForm> getAllMealPlansForUserDisp(AppUser user);
+    List<MealPlanDispForm> getAllMealPlansForUserDisp(AppUser user);
+    List<MealPlanDispForm> getAllEventsForUserdisp(AppUser user);
 }

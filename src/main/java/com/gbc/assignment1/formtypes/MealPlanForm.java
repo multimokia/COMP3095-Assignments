@@ -8,10 +8,13 @@
 */
 package com.gbc.assignment1.formtypes;
 
+import io.micrometer.core.lang.Nullable;
 import lombok.Data;
 
 @Data
 public class MealPlanForm {
     private Long recipeId;
     private Long timestamp;
+    @Nullable
+    private String eventName;
 }

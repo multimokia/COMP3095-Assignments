@@ -95,6 +95,7 @@ public class RecipeResource {
         }
     }
 
+
     @PostMapping("/recipes/create")
     public ResponseEntity<?> createRecipe(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
@@ -115,7 +116,8 @@ public class RecipeResource {
             _recipeService.createRecipe(
                 form.getName(),
                 form.getSteps(),
-                user
+                user,
+                form.getIngredients()
             )
         );
     }

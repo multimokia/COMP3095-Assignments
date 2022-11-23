@@ -8,18 +8,14 @@
 */
 package com.gbc.assignment1.formtypes;
 
-import java.util.Collection;
-
-import com.gbc.assignment1.models.Recipe;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserProfileForm {
+public class EditUserForm {
     private String username;
+    private String password;
+    // Base64 encoded image
     private String avatar;
-    private Collection<Recipe> recipes;
-    private Collection<Recipe> favorites;
 }

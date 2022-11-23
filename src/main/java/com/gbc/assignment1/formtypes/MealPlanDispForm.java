@@ -19,6 +19,7 @@ public class MealPlanDispForm {
     Long id;
     Long timestamp;
     RecipeDispForm recipeData;
+    String eventName;
 
     public MealPlanDispForm(MealPlan mealplan, AppUser user, Recipe recipe) {
         this.id = mealplan.getId();
@@ -29,5 +30,6 @@ public class MealPlanDispForm {
             recipe.getSteps(),
             user.getUsername()
         );
+        this.eventName = mealplan.getEventName();
     }
 }
