@@ -38,19 +38,19 @@ export default function EditProfile() {
           />
           <h1 className="text-[4rem] ">
             <label
-              class="block mb-2 mt-8 text-sm font-medium text-gray-900 dark:text-white"
-              for="file_input"
+              className="block mb-2 mt-8 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="file_input"
             >
               Upload profile picture
             </label>
             <input
-              class="block w-full text-sm  border  rounded-lg cursor-pointer  text-gray-400 focus:outline-non bg-inherit border-gray-600 placeholder-gray-400 "
+              className="block w-full text-sm  border  rounded-lg cursor-pointer  text-gray-400 focus:outline-non bg-inherit border-gray-600 placeholder-gray-400 "
               aria-describedby="file_input_help"
               id="file_input"
               type="file"
             />
             <p
-              class="mt-1 text-sm text-gray-500 dark:text-gray-300"
+              className="mt-1 text-sm text-gray-500 dark:text-gray-300"
               id="file_input_help"
             ></p>
           </h1>
