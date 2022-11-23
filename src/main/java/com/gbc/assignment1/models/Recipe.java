@@ -35,7 +35,7 @@ public class Recipe {
     private String name;
 
     /**
-     * This should be delimited to separate entries.
+     * This is delimited to ingredients to separate steps from each other.
      */
     @Column(name="ingredients")
     private String ingredients;
@@ -44,7 +44,7 @@ public class Recipe {
     private Long authorId;
 
     /**
-     * This is delimited similarly to ingredients to separate steps from each other.
+     * This is delimited to ingredients to separate steps from each other.
      */
     @Column(name="steps")
     private String steps;

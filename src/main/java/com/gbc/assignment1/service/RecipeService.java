@@ -18,7 +18,7 @@ import com.gbc.assignment1.models.AppUser;
 import com.gbc.assignment1.models.Recipe;
 
 public interface RecipeService {
-    Recipe createRecipe(String name, String steps, AppUser author);
+    Recipe createRecipe(String name, String steps, AppUser author, String ingredients);
     Recipe getRecipe(Long recipeId) throws NameNotFoundException;
     RecipeDispForm getRecipeDisp(Long recipeId) throws NameNotFoundException;
     List<RecipeDispForm> getRecipesByName(String name, int page, int pageSize);

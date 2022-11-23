@@ -14,4 +14,5 @@ import lombok.Data;
 public class RecipeInfoForm {
     private String name;
     private String steps;
+    private String ingredients;
 }

@@ -41,6 +41,10 @@ public class AppUser {
     @Column(name="password", nullable=false)
     private String password;
 
+    // Base64 encoded image
+    @Column(name="avatar", nullable=true)
+    private String avatar;
+
     @OneToMany
     @Column(name="recipes")
     private Collection<Recipe> recipes = new ArrayList<>();

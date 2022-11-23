@@ -19,8 +19,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +34,7 @@ import com.gbc.assignment1.service.MealPlanService;
 import com.gbc.assignment1.service.RecipeService;
 import com.gbc.assignment1.service.UserService;
 import com.gbc.assignment1.exceptions.UserAlreadyExistsException;
+import com.gbc.assignment1.formtypes.EditUserForm;
 import com.gbc.assignment1.formtypes.LoginUserForm;
 import com.gbc.assignment1.formtypes.MealPlanForm;
 import com.gbc.assignment1.formtypes.UserProfileForm;
@@ -40,6 +44,9 @@ import com.gbc.assignment1.security.TokenManager;
 
 import lombok.RequiredArgsConstructor;
 
+// NOTE: The user facing api, when an auth token is required, will serve as an @me fetch
+// In other words, these endpoints don't return ALL favourites/recipes/etc., only the ones attributed to
+// The user their token represents
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -102,7 +109,30 @@ public class UserResource {
         }
 
         AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
-        return ResponseEntity.ok().body(new UserProfileForm(user.getUsername(), user.getRecipes()));
+        return ResponseEntity.ok().body(new UserProfileForm(
+            user.getUsername(),
+            user.getAvatar(),
+            user.getRecipes(),
+            user.getFavorites()
+        ));
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> setProfileInfo(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @RequestBody EditUserForm form
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
+
+        user.setUsername(form.getUsername());
+        user.setPassword(form.getPassword());
+        user.setAvatar(form.getAvatar());
+        return ResponseEntity.ok(_userService.saveUser(user));
     }
 
     @GetMapping("/mealplans")
@@ -116,6 +146,67 @@ public class UserResource {
 
         AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
         return ResponseEntity.ok(_mealplanService.getAllMealPlansForUserDisp(user));
+    }
+
+    @GetMapping("/favorites")
+    public ResponseEntity<?> getFavorites(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
+
+        return ResponseEntity.ok(user.getFavorites());
+    }
+
+    @PostMapping("/favorites/add")
+    public ResponseEntity<?> addFavorite(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @RequestBody Recipe recipe
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
+
+        if (user.getFavorites().contains(recipe)) {
+            return new ResponseEntity<>("", HttpStatus.CONFLICT);
+        }
+
+        user.getFavorites().add(recipe);
+        return ResponseEntity.ok(_userService.saveUser(user));
+    }
+
+    @DeleteMapping("/favorites/{id}")
+    public ResponseEntity<?> deleteFavorite(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @PathVariable Long id
+    ) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
+
+        try {
+            Recipe recipe = _recipeService.getRecipe(id);
+
+            if (!user.getFavorites().contains(recipe)) {
+                return new ResponseEntity<>("Recipe is not in user's favorites", HttpStatus.NOT_FOUND);
+            }
+
+            user.getFavorites().remove(recipe);
+            return ResponseEntity.ok(_userService.saveUser(user));
+        }
+        catch (NameNotFoundException ex) {
+            return new ResponseEntity<>("Recipe does not exist.", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/mealplans/create")
