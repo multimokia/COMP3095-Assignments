@@ -130,9 +130,18 @@ public class UserResource {
 
         AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
 
-        user.setUsername(form.getUsername());
-        user.setPassword(form.getPassword());
-        user.setAvatar(form.getAvatar());
+        if (form.getUsername() != null) {
+            user.setUsername(form.getUsername());
+        }
+
+        if (form.getPassword() != null) {
+            user.setPassword(form.getPassword());
+        }
+
+        if (form.getAvatar() != null) {
+            user.setAvatar(form.getAvatar());
+        }
+
         return ResponseEntity.ok(_userService.saveUser(user));
     }
 

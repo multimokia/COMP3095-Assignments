@@ -8,14 +8,20 @@
 */
 package com.gbc.assignment1.formtypes;
 
+import io.micrometer.core.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
 public class EditUserForm {
+    @Nullable
     private String username;
+
+    @Nullable
     private String password;
+
+    @Nullable
     // Base64 encoded image
     private String avatar;
 }
