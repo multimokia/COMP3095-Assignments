@@ -11,9 +11,11 @@ package com.gbc.assignment1.formtypes;
 import io.micrometer.core.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class EditUserForm {
     @Nullable
     private String password;
