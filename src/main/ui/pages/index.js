@@ -45,9 +45,7 @@ export default function Home() {
 
   useEffect(() => {
     if (data) {
-      // console.log(data);
       if (data.error) {
-        // console.log(data.error);
         setError(data.error);
       }
       searchRef.current.focus();

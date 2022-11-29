@@ -11,7 +11,7 @@ import { CalendarIcon } from '@heroicons/react/20/solid';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getCookie } from 'cookies-next';
 
-export default function mealplans() {
+export default function Mealplans() {
   const token = getCookie('jwt');
   const fetcher = async (url, token) =>
     await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
