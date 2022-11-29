@@ -16,9 +16,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class EditUserForm {
     @Nullable
-    private String username;
-
-    @Nullable
     private String password;
 
     @Nullable
