@@ -18,12 +18,14 @@ public class RecipeDispForm implements IRecipeDispForm {
     private String name;
     private String steps;
     private String username;
+    private String ingredients;
 
-    public RecipeDispForm(Long id, String name, String steps, String username) {
+    public RecipeDispForm(Long id, String name, String steps, String username, String ingredients) {
         this.id = id;
         this.name = name;
         this.steps = steps;
         this.username = username;
+        this.ingredients = ingredients;
     }
 
     public static RecipeDispForm fromObject(Object obj) {

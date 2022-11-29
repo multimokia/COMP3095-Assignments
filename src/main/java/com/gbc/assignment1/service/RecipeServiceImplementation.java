@@ -40,7 +40,8 @@ public class RecipeServiceImplementation implements RecipeService {
             recipe.getId(),
             recipe.getName(),
             recipe.getSteps(),
-            user != null ? user.getUsername() : "Ghost"
+            user != null ? user.getUsername() : "Ghost",
+            recipe.getIngredients()
         );
 
         return rv;

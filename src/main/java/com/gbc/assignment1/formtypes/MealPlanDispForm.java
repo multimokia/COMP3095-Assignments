@@ -28,7 +28,8 @@ public class MealPlanDispForm {
             recipe.getId(),
             recipe.getName(),
             recipe.getSteps(),
-            user.getUsername()
+            user.getUsername(),
+            recipe.getIngredients()
         );
         this.eventName = mealplan.getEventName();
     }

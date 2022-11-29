@@ -18,4 +18,5 @@ public interface IRecipeDispForm {
     String getName();
     String getSteps();
     String getUsername();
+    String getIngredients();
 }
