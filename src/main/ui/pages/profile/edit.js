@@ -13,42 +13,32 @@ export default function EditProfile() {
       (res) => res.json()
     );
 
-  const { data: user, error: userError } = useSWR(
+  const {
+    data: user,
+    error: userError,
+    mutate,
+  } = useSWR(
     token ? [`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, token] : null,
     fetcher
   );
 
-  const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isImageError, setIsImageError] = useState(false);
-  const [isImageSuccess, setIsImageSuccess] = useState(false);
-  const [isImageSubmitting, setIsImageSubmitting] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
-    reset,
     formState: { errors },
-  } = useForm({ defaultValues: { username: '' } });
-
-  useEffect(() => {
-    if (user) {
-      setUsername(user.username);
-      reset({ username: user.username });
-    }
-  }, [user, reset]);
+  } = useForm();
 
   const onSubmit = async (data) => {
-    setIsSubmitting(true);
     if (avatar) data.avatar = avatar;
-    if (data.username === user.username || !data.username) delete data.username;
+    if (data.password == '') delete data.password;
+    if (data.password == '') delete data.confirmPassword;
 
-    console.log(data);
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, {
       method: 'PUT',
       headers: {
@@ -57,16 +47,19 @@ export default function EditProfile() {
       },
       body: JSON.stringify(data),
     });
-    // console.log(avatar);
-    // console.log(data);
 
-    // if (res.ok) {
-    //   setIsSuccess(true);
-    //   setIsError(false);
-    // } else {
-    //   setIsError(true);
-    //   setIsSuccess(false);
-    // }
+    if (res.ok) {
+      mutate();
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 3000);
+    } else {
+      setIsError(true);
+      setTimeout(() => {
+        setIsError(false);
+      }, 3000);
+    }
   };
 
   const convertBase64 = (file) => {
@@ -122,8 +115,7 @@ export default function EditProfile() {
           >
             {user.avatar ? (
               <Image
-                src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4QAqRXhpZgAASUkqAAgAAAABADEBAgAHAAAAGgAAAAAAAABHb29nbGUAAP/bAIQAAwICAwICAwMDAwQDAwQFCAUFBAQFCgcHBggMCgwMCwoLCw0OEhANDhEOCwsQFhARExQVFRUMDxcYFhQYEhQVFAEDBAQFBAUJBQUJFA0LDRQRFBQUFBQUExQUDRQUFBQUEBQTFBUUFBQUEhQVFBUQEhQUFBUSFRESFRQUEhIVFBQU/8AAEQgAIAAgAwERAAIRAQMRAf/EABkAAAIDAQAAAAAAAAAAAAAAAAcIBQYJA//EAC0QAAEDAwMCBQMFAQAAAAAAAAECAwQFESEABhIxQQcIUWGBFCJxFTNDofET/8QAHAEAAgICAwAAAAAAAAAAAAAABgcEBQEDAAII/8QALBEAAQMCAgkEAwEAAAAAAAAAAQIDEQAEITEFBhNBYXGRobESUYHwFKLhIv/aAAwDAQACEQMRAD8Az/ai37amVyiV4NUCNWtxsx5b/wBDFZJdckoaKlZFgDbOLKIHfN+mqq+9WBFWdmhKpBqS8atmRoE/9XhPOPRnnUMqckJCHHlKSpQcCAkWFkWOOpSNZsVmC2edZvGgmFpyyoWORfbVrVURUpS6S/UZbEWKyuRIeWG22mxdS1E2AA1occS2krWYAz5VIaaW8sNtiVHADjR38KvAneVI3NCnzm26Eyn9xl9YcW6k4KeKLptYk3JwQMegfe6xWBQUNkr4gYDjjB7Ud6P1X0l6w46kI4EyTwwkfM/HtbvMN4OVGtfQVOluoqDkZotrbKglakkp4pR2xY9bDPqLHpY6ds0q9BVnwMDn9mtmkNXb5wbRKMt0iTyx8xSyVCkvwHlMyWHI7qerbqClQ+Do0bdQ6PUgyOFATzK2VFLiSD7HCiJ5docd/wAaNntyiEsKmKCiSB/E5bJxe9rXxe2qzSaEuWbiFZEDyKs9ELU1fNOIzBJ/U+2NP3Kgxkqlx18v+8dRSPsI5AE5zYj8Ed9IF1vYLW2omQSBh3MwceVeh2nlOJQ6mIUAc5z5SD1rm1SqU+t5NUbU42EhKOJwDcX6f179etxIsXWEqO3nHKN3Thl39xqututKfx4nfPb+9soK4earb1PO24ctlrhKjyEpJSOygQQT6YHzbRnqlcOi5LajgR3FB2uVu2qyS9H+kkdDh9+KXnadak7S3FS61DsJNPktymwoYJQoKsfY2sfY6ZryA6goO/zuPwaUDDhZcDg3eN4+RIp2aVvmobzrTVYDK4Md7i08yQ45ywACeRPFQskWFumbkklZaVtrRVuVrI2sTgcz5I3CZyzpuaIfvQ+G0JOyBIxGQ47gd5iBjlERa5r7TrKmXJduX4Sr/dAKQQfUBTBiKAPmWr0dygMU5DqXX3X03SFgkJT91yO2QB86YGq1sv8AILxEAA9ThS+1yu0JswwDKlEdBjP33r//2Q==
-                  "
+                src={user.avatar}
                 alt="user avatar"
                 width={100}
                 height={100}
@@ -170,24 +162,8 @@ export default function EditProfile() {
               <label className="block mb-2 mt-8 text-sm font-medium text-gray-900 dark:text-white">
                 Username
               </label>
-              <input
-                type="text"
-                className="
-                      w-[16.1rem]
-                      px-3
-                      py-1.5
-                      text-base
-                      font-normal
-                      text-white
-                      border border-solid border-gray-700
-                      rounded-lg
-                      transition
-                      ease-in-out
-                      m-0 focus:outline-none  focus-visible:ring-2  focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 bg-inherit flex-1"
-                {...register('username')}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              ></input>
+
+              <div className="w-[16.1rem]">{user.username}</div>
             </div>
             {showPassword ? (
               <div>
@@ -264,6 +240,17 @@ export default function EditProfile() {
               >
                 Save Changes
               </button>
+              {isError && (
+                <div className="mt-5 flex bg-[#c9606086] rounded-lg p-1.5 items-center justify-center">
+                  <div>Error</div>
+                </div>
+              )}
+
+              {isSuccess && (
+                <div className="mt-5 flex bg-[#bbeea8ba] rounded-lg p-1.5 items-center justify-center">
+                  <div>Saved successfully</div>
+                </div>
+              )}
             </div>
           </form>
         </div>

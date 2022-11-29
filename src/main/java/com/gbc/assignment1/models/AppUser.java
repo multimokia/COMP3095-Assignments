@@ -42,7 +42,7 @@ public class AppUser {
     private String password;
 
     // Base64 encoded image
-    @Column(name="avatar", nullable=true)
+    @Column(name="avatar", nullable=true, columnDefinition = "TEXT", length = 65535 )
     private String avatar;
 
     @OneToMany

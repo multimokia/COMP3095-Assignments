@@ -60,7 +60,8 @@ export default function Navbar() {
                 />
               </div>
               <a className="ml-3">
-                {username.charAt(0).toUpperCase() + username.slice(1)}
+                {/* {username.charAt(0).toUpperCase() + username.slice(1)} */}
+                {username}
               </a>
             </div>
           </Link>
