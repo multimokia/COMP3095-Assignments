@@ -63,14 +63,7 @@ export default function RecipeCard({ recipe, userId = null }) {
               {recipe.name.charAt(0).toUpperCase() + recipe.name.slice(1)}
             </a>
           </Link>
-          <p>
-            {recipe.username
-              ? `By: ${
-                  recipe.username.charAt(0).toUpperCase() +
-                  recipe.username.slice(1)
-                }`
-              : ''}
-          </p>
+          <p>{recipe.username ? `By: ${recipe.username}` : ''}</p>
         </div>
         {showHeart || isHearted ? (
           <svg

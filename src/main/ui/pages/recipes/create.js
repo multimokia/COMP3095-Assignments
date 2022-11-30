@@ -69,7 +69,7 @@ export default function Create() {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
     let steps = '';
     for (let i = 0; i < count; i++) {
       if (i === count - 1) {
@@ -95,8 +95,9 @@ export default function Create() {
         }
       }
     }
-    console.log(ingredients);
-    return;
+    // console.log('ingredients', ingredients);
+    // console.log('steps', steps);
+    // return;
     const { recipeName } = data;
 
     try {
@@ -108,16 +109,14 @@ export default function Create() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ name: recipeName, steps: steps }),
+          body: JSON.stringify({
+            name: recipeName,
+            steps: steps,
+            ingredients: ingredients,
+          }),
         }
       );
-      // throw new Error('Testing error');
-      // setSuccessMsg(`${recipeName} recipe created successfully!`);
       handleSuccess();
-
-      // const jsonData = await res.json();
-
-      // console.log(jsonData);
     } catch (error) {
       console.log(error.message);
       setErrorMsg(error.message);

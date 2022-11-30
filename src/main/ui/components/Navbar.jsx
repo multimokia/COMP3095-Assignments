@@ -1,25 +1,43 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useUserName } from '../lib/hooks';
 import { getCookie, deleteCookie } from 'cookies-next';
 import Image from 'next/image';
+import { useUser } from '../lib/hooks';
 
 export default function Navbar() {
   const router = useRouter();
-  const jwt = getCookie('jwt');
 
   const [username, setUsername] = useState('');
 
+  const { data: user, error: userError } = useUser();
+
   useEffect(() => {
-    setUsername(localStorage.getItem('username'));
-  }, []);
+    if (user) {
+      setUsername(user.username);
+    }
+  }, [user]);
 
   const logOut = () => {
-    localStorage.removeItem('username');
     deleteCookie('jwt');
     router.push('/');
   };
+
+  if (user && userError) {
+    return (
+      <div>
+        <p>{data.error}</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <nav className="flex justify-center items-center mt-10 mx-auto relative ">
@@ -45,36 +63,46 @@ export default function Navbar() {
         <div
           id="icon"
           className="flex items-center  hover:text-blue-500 hover:cursor-pointer"
-          // onClick={() => goToProfile()}
         >
           <Link href="/profile">
             <div className="flex items-center ">
               <div className="flex">
-                <Image
-                  src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4QAqRXhpZgAASUkqAAgAAAABADEBAgAHAAAAGgAAAAAAAABHb29nbGUAAP/bAIQAAwICAwICAwMDAwQDAwQFCAUFBAQFCgcHBggMCgwMCwoLCw0OEhANDhEOCwsQFhARExQVFRUMDxcYFhQYEhQVFAEDBAQFBAUJBQUJFA0LDRQRFBQUFBQUExQUDRQUFBQUEBQTFBUUFBQUEhQVFBUQEhQUFBUSFRESFRQUEhIVFBQU/8AAEQgAIAAgAwERAAIRAQMRAf/EABkAAAIDAQAAAAAAAAAAAAAAAAcIBQYJA//EAC0QAAEDAwMCBQMFAQAAAAAAAAECAwQFESEABhIxQQcIUWGBFCJxFTNDofET/8QAHAEAAgICAwAAAAAAAAAAAAAABgcEBQEDAAII/8QALBEAAQMCAgkEAwEAAAAAAAAAAQIDEQAEITEFBhNBYXGRobESUYHwFKLhIv/aAAwDAQACEQMRAD8Az/ai37amVyiV4NUCNWtxsx5b/wBDFZJdckoaKlZFgDbOLKIHfN+mqq+9WBFWdmhKpBqS8atmRoE/9XhPOPRnnUMqckJCHHlKSpQcCAkWFkWOOpSNZsVmC2edZvGgmFpyyoWORfbVrVURUpS6S/UZbEWKyuRIeWG22mxdS1E2AA1occS2krWYAz5VIaaW8sNtiVHADjR38KvAneVI3NCnzm26Eyn9xl9YcW6k4KeKLptYk3JwQMegfe6xWBQUNkr4gYDjjB7Ud6P1X0l6w46kI4EyTwwkfM/HtbvMN4OVGtfQVOluoqDkZotrbKglakkp4pR2xY9bDPqLHpY6ds0q9BVnwMDn9mtmkNXb5wbRKMt0iTyx8xSyVCkvwHlMyWHI7qerbqClQ+Do0bdQ6PUgyOFATzK2VFLiSD7HCiJ5docd/wAaNntyiEsKmKCiSB/E5bJxe9rXxe2qzSaEuWbiFZEDyKs9ELU1fNOIzBJ/U+2NP3Kgxkqlx18v+8dRSPsI5AE5zYj8Ed9IF1vYLW2omQSBh3MwceVeh2nlOJQ6mIUAc5z5SD1rm1SqU+t5NUbU42EhKOJwDcX6f179etxIsXWEqO3nHKN3Thl39xqututKfx4nfPb+9soK4earb1PO24ctlrhKjyEpJSOygQQT6YHzbRnqlcOi5LajgR3FB2uVu2qyS9H+kkdDh9+KXnadak7S3FS61DsJNPktymwoYJQoKsfY2sfY6ZryA6goO/zuPwaUDDhZcDg3eN4+RIp2aVvmobzrTVYDK4Md7i08yQ45ywACeRPFQskWFumbkklZaVtrRVuVrI2sTgcz5I3CZyzpuaIfvQ+G0JOyBIxGQ47gd5iBjlERa5r7TrKmXJduX4Sr/dAKQQfUBTBiKAPmWr0dygMU5DqXX3X03SFgkJT91yO2QB86YGq1sv8AILxEAA9ThS+1yu0JswwDKlEdBjP33r//2Q==
-                "
-                  alt="profile image"
-                  width={45}
-                  height={45}
-                  className="rounded-full"
-                />
+                {user.avatar ? (
+                  <Image
+                    src={user.avatar}
+                    alt="profile image"
+                    width={45}
+                    height={45}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-24 h-24 mr-1  border-gray-500 border-4 rounded-full p-2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                    />
+                  </svg>
+                )}
               </div>
-              <a className="ml-3">
-                {/* {username.charAt(0).toUpperCase() + username.slice(1)} */}
-                {username}
-              </a>
+              <a className="ml-3">{username}</a>
             </div>
           </Link>
         </div>
         <div id="logout">
-          {/* <Link href="/api/logout"> */}
           <p
             className="bg-[#0070f3] hover:bg-blue-700 hover:cursor-pointer text-white font-bold py-2 px-4 rounded"
             onClick={() => logOut()}
           >
             Logout
           </p>
-          {/* </Link> */}
         </div>
       </div>
     </nav>

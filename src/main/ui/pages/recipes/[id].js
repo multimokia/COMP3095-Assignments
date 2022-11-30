@@ -53,11 +53,12 @@ export default function Recipe() {
   );
 
   const [steps, setSteps] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
     if (recipe && !recipe.error) {
       setSteps(recipe.steps.split('\\n'));
-    } else if (recipe && recipe.error) {
+      if (recipe.ingredients) setIngredients(recipe.ingredients.split('\\n'));
     }
   }, [recipe]);
 
@@ -110,23 +111,32 @@ export default function Recipe() {
                       ease-in-out
                       bg-inherit flex-1 w-full"
             >
-              <div className="flex flex-col">
-                <div className="flex items-center">
-                  <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
-                  <div>1 Tbs of Mazier piss</div>
+              {/* TODO: Figure out a context for shopping list, 
+                        for each ingredient, add a plus icon -> check icon and when clicked add
+                        the ingredient to the value in context (have the context update the cookie value) */}
+              {ingredients.length > 0 ? (
+                <div className="flex flex-col">
+                  {ingredients.map((ingredient, index) => (
+                    <div key={index} className="flex items-center">
+                      <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
+                      <div>{ingredient}</div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center">
-                  <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
-                  <div>3 Chickens</div>
+              ) : (
+                <div className="flex flex-col">
+                  <div className="flex items-center">
+                    <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
+                    <div className="text-[#a2a0a6]">
+                      This recipe has no ingredients specified. Use your
+                      imagination instead!
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
-                  <div>1 Weed</div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
-          <div id="searchBar" className="mt-10 flex flex-col ">
+          <div className="mt-10 flex flex-col ">
             {steps.map((step, index) => (
               <div className="mb-5 " key={index}>
                 <p className="text-xl">

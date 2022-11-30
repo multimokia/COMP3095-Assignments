@@ -1,26 +1,11 @@
 import Head from 'next/head';
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
-import { getCookie } from 'cookies-next';
+import { useUser } from '../../lib/hooks';
 import { useForm } from 'react-hook-form';
 
 export default function EditProfile() {
-  const token = getCookie('jwt');
-  const fetcher = async (url, token) =>
-    await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
-      (res) => res.json()
-    );
-
-  const {
-    data: user,
-    error: userError,
-    mutate,
-  } = useSWR(
-    token ? [`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, token] : null,
-    fetcher
-  );
+  const { data: user, error: userError, mutate } = useUser();
 
   const [showPassword, setShowPassword] = useState(false);
   const [avatar, setAvatar] = useState(null);

@@ -8,6 +8,8 @@ function MyApp({ Component, pageProps }) {
     router.pathname === '/login' || router.pathname === '/register'
       ? false
       : true;
+
+  //TODO: shopping list context, user context
   return (
     <>
       {showNav && <Navbar />}

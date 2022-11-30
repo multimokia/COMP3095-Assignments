@@ -4,13 +4,9 @@ import Head from 'next/head';
 import RecipeCard from '../../components/RecipeCard';
 import { getCookie } from 'cookies-next';
 import Link from 'next/link';
+import { useUser } from '../../lib/hooks';
 
 export default function Profile() {
-  const token = getCookie('jwt');
-  const fetcher = async (url, token) =>
-    await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
-      (res) => res.json()
-    );
   const [filter, setFilter] = useState('user');
 
   // const { data, error: userRecipesError } = useSWR(
@@ -18,10 +14,7 @@ export default function Profile() {
   //   fetcher
   // );
 
-  const { data, error: userRecipesError } = useSWR(
-    token ? [`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, token] : null,
-    fetcher
-  );
+  const { data, error: userRecipesError } = useUser();
 
   const heartedRecipes = true;
   const heartedRecipesError = false;

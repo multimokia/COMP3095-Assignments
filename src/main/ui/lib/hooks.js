@@ -1,34 +1,22 @@
 import { useEffect, useState, useRef } from 'react';
+import { getCookie } from 'cookies-next';
+import useSWR from 'swr';
 
-export function useInput(initialValue) {
-  const [value, setValue] = useState(initialValue);
-  const onChange = (e) => {
-    setValue(e.target.value);
+const token = getCookie('jwt');
+const fetcher = async (url, token) =>
+  await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
+    (res) => res.json()
+  );
+
+export function useUser() {
+  const { data, error, mutate } = useSWR(
+    token ? [`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, token] : null,
+    fetcher
+  );
+
+  return {
+    data,
+    error,
+    mutate,
   };
-  return { value, onChange };
-}
-
-export async function useUserName() {
-  let userName = '';
-
-  let getUserName = new Promise((resolve, reject) => {
-    let userN = localStorage.getItem('username');
-    resolve(userN);
-  });
-
-  if (typeof window !== 'undefined') {
-    userName = await getUserName;
-  }
-
-  return { userName };
-}
-
-export function useFirstRender() {
-  const firstRender = useRef(true);
-
-  useEffect(() => {
-    firstRender.current = false;
-  }, []);
-
-  return firstRender.current;
 }
