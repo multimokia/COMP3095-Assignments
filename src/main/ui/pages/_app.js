@@ -10,6 +10,9 @@ function MyApp({ Component, pageProps }) {
       : true;
 
   //TODO: shopping list context, user context
+
+  //TODO: add shopping list to navbar
+  //TODO: SHOPPING LIST, FAVOURITES, EVENTS
   return (
     <>
       {showNav && <Navbar />}

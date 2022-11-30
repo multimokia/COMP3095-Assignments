@@ -3,8 +3,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useUser } from '../../lib/hooks';
 import { useForm } from 'react-hook-form';
+import { getCookie } from 'cookies-next';
 
 export default function EditProfile() {
+  const token = getCookie('jwt');
   const { data: user, error: userError, mutate } = useUser();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -98,7 +100,15 @@ export default function EditProfile() {
             className="flex flex-col items-center justify-center pt-20 "
             onSubmit={handleSubmit(onSubmit)}
           >
-            {user.avatar ? (
+            {avatar ? (
+              <Image
+                src={avatar}
+                alt="user avatar"
+                width={100}
+                height={100}
+                className="rounded-full "
+              />
+            ) : user.avatar ? (
               <Image
                 src={user.avatar}
                 alt="user avatar"

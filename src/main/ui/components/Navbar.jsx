@@ -82,7 +82,7 @@ export default function Navbar() {
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="w-24 h-24 mr-1  border-gray-500 border-4 rounded-full p-2"
+                    className="w-12 h-12 mr-1  border-gray-500 border-4 rounded-full p-2"
                   >
                     <path
                       strokeLinecap="round"
