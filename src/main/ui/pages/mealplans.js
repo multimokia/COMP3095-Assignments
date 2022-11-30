@@ -1,6 +1,4 @@
-import { useForm } from 'react-hook-form';
 import Head from 'next/head';
-import useSWR, { useSWRConfig } from 'swr';
 import { useEffect, useState, Fragment } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import moment from 'moment';
@@ -9,40 +7,18 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import DatePicker from 'react-datepicker';
 import { CalendarIcon } from '@heroicons/react/20/solid';
 import 'react-datepicker/dist/react-datepicker.css';
-import { getCookie } from 'cookies-next';
+import { useFetch } from '../lib/hooks';
 
 export default function Mealplans() {
-  const token = getCookie('jwt');
-  const fetcher = async (url, token) =>
-    await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
-      (res) => res.json()
-    );
-
-  // const { data, error } = useSWR(`/api/mealplans`, fetcher);
-
-  // const { data: recipes, error: recipesError } = useSWR(
-  //   `/api/recipes`,
-  //   fetcher
-  // );
-  // const { mutate } = useSWRConfig();
-  const { data: recipes, error: recipesError } = useSWR(
-    token
-      ? [`${process.env.NEXT_PUBLIC_API_URL}/api/recipes?limit=500`, token]
-      : null,
-    fetcher
+  const { data: recipes, error: recipesError } = useFetch(
+    '/api/recipes?limit=500'
   );
 
-  const { data, error, mutate } = useSWR(
-    token ? [`${process.env.NEXT_PUBLIC_API_URL}/api/mealplans`, token] : null,
-    fetcher
-  );
+  const { data, error, mutate } = useFetch('/api/mealplans');
 
   let newArray = [];
 
   if (data) {
-    // if (typeof data == [] && data.length == 0) {
-
-    // }
     for (let i = 0; i < data.length; i++) {
       if (moment(data[i].timestamp).valueOf() < moment().valueOf()) {
         continue;
@@ -62,7 +38,6 @@ export default function Mealplans() {
 
   useEffect(() => {
     if (recipes) {
-      // console.log(recipes);
       setSelected(recipes[0]);
     }
   }, [recipes]);
@@ -77,21 +52,16 @@ export default function Mealplans() {
             .includes(query.toLowerCase().replace(/\s+/g, ''))
         );
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-
   useEffect(() => {
     setDatePickerSelected(false);
   }, [dateValue]);
 
-  const onSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const data = {
       recipeId: selected.id,
-      timestamp: moment(dateValue).valueOf(), //unix()
+      timestamp: moment(dateValue).valueOf(),
     };
 
     try {
@@ -106,9 +76,8 @@ export default function Mealplans() {
           body: JSON.stringify(data),
         }
       );
-      // const jsonData = await res.json();
-      // console.log(jsonData);
-      mutate({ ...data });
+
+      mutate();
     } catch (error) {
       console.log(error.message);
     }
@@ -176,7 +145,7 @@ export default function Mealplans() {
           </h1>
 
           <div className="w-[30rem]">
-            <form className="flex flex-col " onSubmit={handleSubmit(onSubmit)}>
+            <form className="flex flex-col " onSubmit={handleSubmit}>
               <label className="mt-8 font-semibold text-xl mb-2 text-center ">
                 Schedule your meals!
               </label>

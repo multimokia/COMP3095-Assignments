@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { getCookie, deleteCookie } from 'cookies-next';
+import { deleteCookie } from 'cookies-next';
 import Image from 'next/image';
 import { useUser } from '../lib/hooks';
 

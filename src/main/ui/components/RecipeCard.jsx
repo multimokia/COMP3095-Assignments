@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import useSWR from 'swr';
 
 export default function RecipeCard({ recipe, userId = null }) {
   const fetcher = (url) => fetch(url).then((res) => res.json());

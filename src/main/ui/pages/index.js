@@ -1,47 +1,23 @@
 import Head from 'next/head';
-import Image from 'next/image';
-import useSWR from 'swr';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import RecipeCard from '../components/RecipeCard';
-import { getCookie } from 'cookies-next';
+import { useFetch } from '../lib/hooks';
 
 export default function Home() {
-  const [token, setToken] = useState(null);
   const searchRef = useRef(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const jwt = getCookie('jwt');
-    if (!jwt) {
-      setError('You must be logged in to view this page');
-    }
-    setToken(jwt);
-  }, []);
-
-  const fetcher = async (url, token) =>
-    await fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
-      (res) => res.json()
-    );
   const router = useRouter();
-  const { name, limit } = router.query;
+  const { limit } = router.query;
 
   const [limitCount, setLimitCount] = useState(4);
-  const [filter, setFilter] = useState('');
 
   const [recipeName, setRecipeName] = useState('');
 
   const recipeLimit = limit ? `?limit=${limit}` : `?limit=${limitCount}`;
 
-  const { data, error: serverError } = useSWR(
-    token
-      ? [
-          `${process.env.NEXT_PUBLIC_API_URL}/api/recipes${recipeLimit}&name=${recipeName}`,
-          token,
-        ]
-      : null,
-    fetcher
-  );
+  const { data } = useFetch(`/api/recipes${recipeLimit}&name=${recipeName}`);
 
   useEffect(() => {
     if (data) {

@@ -95,9 +95,6 @@ export default function Create() {
         }
       }
     }
-    // console.log('ingredients', ingredients);
-    // console.log('steps', steps);
-    // return;
     const { recipeName } = data;
 
     try {
