@@ -8,3 +8,7 @@ export function getDepsForRequest() {
     );
   return [token, fetcher];
 }
+
+export function genRandStr() {
+  return Math.random().toString(36).substring(2, 6);
+}

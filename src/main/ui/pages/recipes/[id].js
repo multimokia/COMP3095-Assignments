@@ -119,7 +119,7 @@ export default function Recipe() {
                   {ingredients.map((ingredient, index) => (
                     <div key={index} className="flex items-center">
                       <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
-                      <div>{ingredient}</div>
+                      <div>{ingredient.slice(6)}</div>
                     </div>
                   ))}
                 </div>

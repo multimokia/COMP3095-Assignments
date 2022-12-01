@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { getCookie } from 'cookies-next';
 import { useEffect, useState, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import { genRandStr } from '../../lib/functions';
 
 export default function Create() {
   const router = useRouter();
@@ -69,7 +70,6 @@ export default function Create() {
   };
 
   const onSubmit = async (data) => {
-    // console.log(data);
     let steps = '';
     for (let i = 0; i < count; i++) {
       if (i === count - 1) {
@@ -87,11 +87,13 @@ export default function Create() {
     for (let i = 0; i < ingredientCount; i++) {
       if (i === ingredientCount - 1) {
         if (data[`i${i}`]) {
-          ingredients += data[`i${i}`];
+          let id = genRandStr();
+          ingredients += `(${id})` + data[`i${i}`];
         }
       } else {
         if (data[`i${i}`]) {
-          ingredients += data[`i${i}`] + '\\n';
+          let id = genRandStr();
+          ingredients += `(${id})` + data[`i${i}`] + '\\n';
         }
       }
     }

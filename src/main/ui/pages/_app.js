@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import Navbar from '../components/Navbar';
 import { useRouter } from 'next/router';
+import { ShoppingListProvider } from '../context/ShoppingListContext';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -9,15 +10,15 @@ function MyApp({ Component, pageProps }) {
       ? false
       : true;
 
-  //TODO: shopping list context, user context
-
   //TODO: add shopping list to navbar
   //TODO: SHOPPING LIST, FAVOURITES, EVENTS
+  //TODO: user context?
   return (
     <>
-      {showNav && <Navbar />}
-
-      <Component {...pageProps} />
+      <ShoppingListProvider>
+        {showNav && <Navbar />}
+        <Component {...pageProps} />
+      </ShoppingListProvider>
     </>
   );
 }
