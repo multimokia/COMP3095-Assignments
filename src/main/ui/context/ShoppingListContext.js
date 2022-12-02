@@ -38,7 +38,23 @@ export function ShoppingListProvider({ children }) {
   );
 
   function updateShoppingList(ingredient, action = null) {
-    if (action) {
+    if (action && action === 'delete') {
+        //getCookie and split it, iterate through array, find item and remove it, join array back to string and setcookie
+        let listToArr = shoppingList.split('\\n')
+        listToArr.shift();
+        let listMinusItem = listToArr.filter((item) => item != ingredient)
+        let final = listMinusItem.join('\\n');
+        if (final.length > 0) {
+            final = '\\n' + final;
+            setShoppingList(final)
+        } else if (final == 0) {
+            setShoppingList('')
+        }
+
+        setShoppingListCount(
+            (prevShoppingListCount) => prevShoppingListCount - 1
+          );
+    } else if (action) {
       setShoppingList('');
     } else {
       setShoppingList(
@@ -48,7 +64,8 @@ export function ShoppingListProvider({ children }) {
         (prevShoppingListCount) => prevShoppingListCount + 1
       );
     }
-    // I can add another action like rewrite the cookie
+    // TODO: I can add another action like rewrite the cookie
+    // where it 
   }
 
   useEffect(() => {

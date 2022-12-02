@@ -5,7 +5,7 @@ import { getCookie, setCookie } from 'cookies-next';
 export function IngredientListItem({
   ingredientName,
   showPlusIcons,
-  showDeleteIcon = false,
+  showDeleteIcons,
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
@@ -15,6 +15,10 @@ export function IngredientListItem({
   function addToList(ingredientName) {
     updateShoppingList(ingredientName);
     setIsClicked(true);
+  }
+
+  function deleteFromList(ingredientName) {
+    updateShoppingList(ingredientName, "delete");
   }
 
   return (
@@ -56,6 +60,12 @@ export function IngredientListItem({
             />
           </svg>
         ))}
+        {showDeleteIcons && (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="red" className="w-4 h-6 ml-1.5 hover:cursor-pointer" onClick={()=> deleteFromList(ingredientName)}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
+            
+          </svg>          
+        )}
     </div>
   );
 }

@@ -13,6 +13,7 @@ export default function Shoppinglist() {
   const shoppingListCtx = useShoppingList();
 
   const [ingredients, setIngredients] = useState([]);
+  const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
     if (shoppingListCtx) {
@@ -78,6 +79,8 @@ export default function Shoppinglist() {
                       transition
                       ease-in-out
                       bg-inherit flex-1 w-full"
+                      onMouseOver={() => setShowDelete(true)}
+                      onMouseLeave={() => setShowDelete(false)}
             >
               {ingredients.length > 0 ? (
                 <div className="flex flex-col">
@@ -86,7 +89,7 @@ export default function Shoppinglist() {
                       key={index}
                       ingredientName={ingredient}
                       showPlusIcons={false}
-                      showDeleteIcons={true}
+                      showDeleteIcons={showDelete}
                     />
                   ))}
                 </div>

@@ -125,6 +125,7 @@ export default function Recipe() {
                       key={index}
                       ingredientName={ingredient}
                       showPlusIcons={showPlusIcons}
+                      showDeleteIcons={false}
                     />
                   ))}
                 </div>
