@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useEffect, useState } from 'react';
 import { getCookie } from 'cookies-next';
+import { IngredientListItem } from '../../components/IngredientListItem';
 
 export default function Recipe() {
   const token = getCookie('jwt');
@@ -18,6 +19,7 @@ export default function Recipe() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [showPlusIcons, setShowPlusIcons] = useState(false);
 
   function closeModal() {
     setIsOpen(false);
@@ -110,6 +112,8 @@ export default function Recipe() {
                       transition
                       ease-in-out
                       bg-inherit flex-1 w-full"
+              onMouseOver={() => setShowPlusIcons(true)}
+              onMouseLeave={() => setShowPlusIcons(false)}
             >
               {/* TODO: Figure out a context for shopping list, 
                         for each ingredient, add a plus icon -> check icon and when clicked add
@@ -117,10 +121,11 @@ export default function Recipe() {
               {ingredients.length > 0 ? (
                 <div className="flex flex-col">
                   {ingredients.map((ingredient, index) => (
-                    <div key={index} className="flex items-center">
-                      <hr className="w-3 border border-b-1  mr-3 border-gray-700"></hr>
-                      <div>{ingredient.slice(6)}</div>
-                    </div>
+                    <IngredientListItem
+                      key={index}
+                      ingredientName={ingredient}
+                      showPlusIcons={showPlusIcons}
+                    />
                   ))}
                 </div>
               ) : (

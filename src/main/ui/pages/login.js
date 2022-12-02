@@ -32,6 +32,9 @@ export default function Login() {
         document.cookie = `jwt=${jwt}; path=/; expires=${new Date(
           (Math.floor(Date.now() / 1000) + 60 * 60) * 1000
         ).toUTCString()};`;
+        document.cookie = `shoppingList=; path=/; expires=${new Date(
+          (Math.floor(Date.now() / 1000) + 60 * 60) * 1000
+        ).toUTCString()};`;
         localStorage.setItem('username', data.username);
         const returnUrl = router.query.returnUrl || '/';
         router.push(returnUrl);
