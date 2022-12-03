@@ -10,9 +10,11 @@ function MyApp({ Component, pageProps }) {
       ? false
       : true;
 
-  //TODO: add shopping list to navbar
-  //TODO: SHOPPING LIST, FAVOURITES, EVENTS
-  //TODO: user context?
+  //TODO:FAVOURITES
+  //TODO: DELETE RECIPE
+  //TODO: EVENTS
+  //TODO: EXPORT SHOPPING LIST
+
   return (
     <>
       <ShoppingListProvider>

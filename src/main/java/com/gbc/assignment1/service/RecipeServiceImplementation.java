@@ -9,6 +9,7 @@
 package com.gbc.assignment1.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.naming.NameNotFoundException;
@@ -59,7 +60,7 @@ public class RecipeServiceImplementation implements RecipeService {
 
     @Override
     public Recipe createRecipe(String name, String steps, AppUser author, String ingredients) {
-        Recipe recipe = new Recipe(null, name, ingredients, author.getId(), steps);
+        Recipe recipe = new Recipe(null, name, ingredients, author.getId(), steps, new HashSet<>());
         author.getRecipes().add(recipe);
 
         _recipeRepo.save(recipe);

@@ -135,7 +135,7 @@ export default function Home() {
               ''
             )}
             {data.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+              <RecipeCard key={recipe.id} recipe={recipe} userId={'test'} />
             ))}
           </div>
           {data.length < limitCount ? (

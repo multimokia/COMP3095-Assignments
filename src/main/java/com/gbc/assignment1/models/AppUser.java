@@ -10,14 +10,21 @@ package com.gbc.assignment1.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,7 +60,9 @@ public class AppUser {
     @Column(name="mealplans")
     private Collection<MealPlan> mealplans = new ArrayList<>();
 
-    @OneToMany
-    @Column(name="favorites")
-    private Collection<Recipe> favorites = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name="favorites",
+        joinColumns = @JoinColumn(name="userId"),
+        inverseJoinColumns = @JoinColumn(name="recipeId"))
+    private Set<Recipe> favorites = new HashSet<>();
 }

@@ -39,21 +39,19 @@ export function ShoppingListProvider({ children }) {
 
   function updateShoppingList(ingredient, action = null) {
     if (action && action === 'delete') {
-        //getCookie and split it, iterate through array, find item and remove it, join array back to string and setcookie
-        let listToArr = shoppingList.split('\\n')
-        listToArr.shift();
-        let listMinusItem = listToArr.filter((item) => item != ingredient)
-        let final = listMinusItem.join('\\n');
-        if (final.length > 0) {
-            final = '\\n' + final;
-            setShoppingList(final)
-        } else if (final == 0) {
-            setShoppingList('')
-        }
-
-        setShoppingListCount(
-            (prevShoppingListCount) => prevShoppingListCount - 1
-          );
+      let listToArr = shoppingList.split('\\n');
+      listToArr.shift();
+      let listMinusItem = listToArr.filter((item) => item != ingredient);
+      let final = listMinusItem.join('\\n');
+      if (final.length > 0) {
+        final = '\\n' + final;
+        setShoppingList(final);
+      } else if (final == 0) {
+        setShoppingList('a');
+      }
+      setShoppingListCount(
+        (prevShoppingListCount) => prevShoppingListCount - 1
+      );
     } else if (action) {
       setShoppingList('');
     } else {
@@ -64,12 +62,9 @@ export function ShoppingListProvider({ children }) {
         (prevShoppingListCount) => prevShoppingListCount + 1
       );
     }
-    // TODO: I can add another action like rewrite the cookie
-    // where it 
   }
 
   useEffect(() => {
-    // console.log(getCountFromCookie());
     document.cookie = `shoppingList=${shoppingList}; path=/; expires=${new Date(
       (Math.floor(Date.now() / 1000) + 60 * 60) * 1000
     ).toUTCString()};`;

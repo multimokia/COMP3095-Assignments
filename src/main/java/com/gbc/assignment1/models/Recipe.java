@@ -9,18 +9,26 @@
 
 package com.gbc.assignment1.models;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Entity
+@EqualsAndHashCode(exclude = "favoritedBy")
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -48,4 +56,8 @@ public class Recipe {
      */
     @Column(name="steps")
     private String steps;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "favorites")
+    private Set<AppUser> favoritedBy = new HashSet<>();
 }

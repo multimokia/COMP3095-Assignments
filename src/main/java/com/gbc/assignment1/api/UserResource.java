@@ -11,6 +11,7 @@ package com.gbc.assignment1.api;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.naming.NameNotFoundException;
 import javax.security.auth.login.CredentialException;
@@ -169,10 +170,10 @@ public class UserResource {
         return ResponseEntity.ok(user.getFavorites());
     }
 
-    @PostMapping("/favorites/add")
-    public ResponseEntity<?> addFavorite(
+    @GetMapping("/favorites/{id}")
+    public ResponseEntity<?> getFavorite(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-        @RequestBody Recipe recipe
+        @PathVariable Long id
     ) {
         // Verify user is logged in
         if (!isValidJWT(token)) {
@@ -181,12 +182,46 @@ public class UserResource {
 
         AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
 
-        if (user.getFavorites().contains(recipe)) {
-            return new ResponseEntity<>("", HttpStatus.CONFLICT);
+        Recipe result = user.getFavorites().stream().filter(f -> f.getId() == id).findFirst().orElse(null);
+
+        if (result == null) {
+            return ResponseEntity.ok("null");
         }
 
-        user.getFavorites().add(recipe);
-        return ResponseEntity.ok(_userService.saveUser(user));
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/favorites/{id}")
+    public ResponseEntity<?> addFavorite(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @PathVariable Long id
+    )  {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
+
+        try {
+            Recipe recipe = _recipeService.getRecipe(id);
+
+            if (user.getFavorites().contains(recipe)) {
+                return new ResponseEntity<>("", HttpStatus.CONFLICT);
+            }
+            Set<Recipe> favorites = user.getFavorites();
+
+            favorites.add(recipe);
+            user.setFavorites(favorites);
+
+            _userService.saveUser(user);
+
+            return ResponseEntity.ok("test");
+        }
+
+        catch (NameNotFoundException ex) {
+            return new ResponseEntity<>("Not found.", HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/favorites/{id}")

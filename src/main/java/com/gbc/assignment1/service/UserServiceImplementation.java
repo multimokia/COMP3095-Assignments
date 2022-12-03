@@ -9,6 +9,7 @@
 package com.gbc.assignment1.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.security.auth.login.CredentialException;
 import javax.transaction.Transactional;
@@ -73,7 +74,7 @@ public class UserServiceImplementation implements UserService {
             null,
             new ArrayList<>(),
             new ArrayList<>(),
-            new ArrayList<>()
+            new HashSet<>()
         );
 
         saveUser(user);

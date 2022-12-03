@@ -9,11 +9,6 @@ import { useUser } from '../../lib/hooks';
 export default function Profile() {
   const [filter, setFilter] = useState('user');
 
-  // const { data, error: userRecipesError } = useSWR(
-  //   `/api/recipes?&name=stanley`,
-  //   fetcher
-  // );
-
   const { data, error: userRecipesError } = useUser();
 
   const heartedRecipes = true;
@@ -23,11 +18,6 @@ export default function Profile() {
   //     `/api/heartedrecipes?userid=1`,
   //     fetcher
   //   );
-
-  // make swr call with userId and recipeId to get hearted status, set isHearted to that(either gonna come back as true or false or undefined, set to false
-  // for the last 2 cases). When heart gets clicked, check state of isHearted, if true, make delete request, if false, make post request.
-
-  //in the user profile page , pass null (its a default param so just dont pass a prop for userId) for userid when displaying recipes, so that the heart doesn't show up
 
   //view hearted recipes button == make a get request to the hearted table (many to many), get back an array of recipes, display them or false no entries returned
 
@@ -110,30 +100,28 @@ export default function Profile() {
             </button>
           </div>
 
-          {filter == 'user' ? (
-            data && !userRecipesError ? (
+          {filter == 'user' &&
+            (data && !userRecipesError ? (
               <div className="recipe-container">
                 {data.recipes.map((recipe) => (
                   <RecipeCard key={recipe.id} recipe={recipe} />
                 ))}
               </div>
             ) : (
-              <div>Error for user Recipes</div>
-            )
-          ) : heartedRecipes && !heartedRecipesError ? (
-            <div>Hearted Recipes coming soon to a theatre near you...</div>
-          ) : (
-            <div>Error for hearted Recipes</div>
-          )}
-          {/* {data && !error ? (
-            <div className="recipe-container">
-              {data.recipes.map((recipe) => (
-                <Recipe key={recipe.id} recipe={recipe} />
-              ))}
-            </div>
-          ) : (
-            <div className="flex mt-10 text-red-400">{error}</div>
-          )} */}
+              <div>
+                No Recipes Found, click on Create Recipe to get started!
+              </div>
+            ))}
+          {filter == 'hearted' &&
+            (data && !userRecipesError ? (
+              <div className="recipe-container">
+                {data.favorites.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
+                ))}
+              </div>
+            ) : (
+              <div>No favourited recipes yet, go and like a few!</div>
+            ))}
         </div>
       </main>
     </div>

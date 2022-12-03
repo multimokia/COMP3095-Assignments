@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useFetch } from '../lib/hooks';
+import { getCookie } from 'cookies-next';
 
 export default function RecipeCard({ recipe, userId = null }) {
+  const token = getCookie('jwt');
   const fetcher = (url) => fetch(url).then((res) => res.json());
-  const [isHearted, setIsHearted] = useState(
-    'hearted' in recipe ? recipe.hearted : false
-  );
+  const [isHearted, setIsHearted] = useState(false);
 
   const [showHeart, setShowHeart] = useState(false);
-
-  // console.log(recipe);
 
   //use recipe.authorId to fetch author name
 
@@ -20,8 +19,49 @@ export default function RecipeCard({ recipe, userId = null }) {
   //     `/api/heartedrecipes?userid=1&recipeid=1`,
   //     fetcher
   //   );
+  const { data: heartedRecipe, error: heartedRecipeError } = useFetch(
+    `/api/favorites/${recipe.id}`
+  );
 
-  // const [isHearted, setIsHearted] = useState(false);
+  useEffect(() => {
+    if (heartedRecipe && userId) {
+      if (heartedRecipe == 'null') {
+        setIsHearted(false);
+      } else {
+        setIsHearted(true);
+      }
+    }
+  }, [heartedRecipe, userId]);
+
+  const handleHeartClick = async () => {
+    if (isHearted) {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/favorites/${recipe.id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      setIsHearted(false);
+    } else {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/favorites/${recipe.id}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      setIsHearted(true);
+    }
+  };
 
   // useEffect(() => {
   //   if (heartedRecipe) { // the check may be different, but this is the idea, if it returns a positive set it to true
@@ -34,13 +74,13 @@ export default function RecipeCard({ recipe, userId = null }) {
 
   //  userId != null ,if userId is passed in, show the heart
   function handleShowHeart() {
-    if ('hearted' in recipe) {
+    if (userId) {
       setShowHeart(true);
     }
   }
   // userId != null ,if userId is passed in, show the heart
   function handleLeaveHeart() {
-    if ('hearted' in recipe) {
+    if (userId) {
       setShowHeart(false);
     }
   }
@@ -70,6 +110,7 @@ export default function RecipeCard({ recipe, userId = null }) {
             className="h-7 w-7 hover:cursor-pointer"
             viewBox="0 0 24 24"
             stroke="currentColor"
+            onClick={() => handleHeartClick()}
           >
             {isHearted ? (
               <defs>

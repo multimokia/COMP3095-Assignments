@@ -25,6 +25,7 @@ export default function Navbar() {
 
   useEffect(() => {
     if (user) {
+      console.log(user);
       setUsername(user.username);
     }
   }, [user]);

@@ -9,6 +9,7 @@
 package com.gbc.assignment1.formtypes;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.gbc.assignment1.models.Recipe;
 
@@ -21,5 +22,5 @@ public class UserProfileForm {
     private String username;
     private String avatar;
     private Collection<Recipe> recipes;
-    private Collection<Recipe> favorites;
+    private Set<Recipe> favorites;
 }
