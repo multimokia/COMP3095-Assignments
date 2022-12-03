@@ -58,7 +58,6 @@ export default function RecipeCard({ recipe, userId = null }) {
           },
         }
       );
-      const data = await res.json();
       setIsHearted(true);
     }
   };

@@ -216,7 +216,7 @@ public class UserResource {
 
             _userService.saveUser(user);
 
-            return ResponseEntity.ok("test");
+            return ResponseEntity.ok(recipe);
         }
 
         catch (NameNotFoundException ex) {
