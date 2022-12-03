@@ -138,16 +138,25 @@ export default function Navbar() {
                 <div id="tsalkbubble" className="relative top-10 z-10 ">
                   <div className="flex flex-col items-center">
                     <div className="flex-col items-center">
-                      <Link href="/profile">
-                        <a className="hover:cursor-pointer hover:text-blue-500">
-                          profile
-                        </a>
-                      </Link>
+                      <div>
+                        <Link href="/profile">
+                          <a className="hover:cursor-pointer hover:text-blue-500">
+                            Profile
+                          </a>
+                        </Link>
+                      </div>
+                      <div className="mt-1">
+                        <Link href="/eventplans">
+                          <a className="hover:cursor-pointer hover:text-blue-500">
+                            Events
+                          </a>
+                        </Link>
+                      </div>
                       <div
                         onClick={() => logOut()}
-                        className="mt-3 hover:text-blue-500"
+                        className="mt-1 hover:text-blue-500"
                       >
-                        logout
+                        Log out
                       </div>
                     </div>
                   </div>

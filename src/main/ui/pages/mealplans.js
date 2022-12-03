@@ -8,8 +8,10 @@ import DatePicker from 'react-datepicker';
 import { CalendarIcon } from '@heroicons/react/20/solid';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useFetch } from '../lib/hooks';
+import { getCookie } from 'cookies-next';
 
 export default function Mealplans() {
+  const token = getCookie('jwt');
   const { data: recipes, error: recipesError } = useFetch(
     '/api/recipes?limit=500'
   );
@@ -35,6 +37,8 @@ export default function Mealplans() {
   const [query, setQuery] = useState('');
   const [dateValue, setDateValue] = useState(new Date(moment().add(1, 'days')));
   const [datePickerSelected, setDatePickerSelected] = useState(false);
+  const [eventChecked, setEventChecked] = useState(false);
+  const [eventName, setEventName] = useState('');
 
   useEffect(() => {
     if (recipes) {
@@ -62,6 +66,7 @@ export default function Mealplans() {
     const data = {
       recipeId: selected.id,
       timestamp: moment(dateValue).valueOf(),
+      eventName: eventName ? eventName : null,
     };
 
     try {
@@ -76,7 +81,8 @@ export default function Mealplans() {
           body: JSON.stringify(data),
         }
       );
-
+      setEventChecked(false);
+      setEventName('');
       mutate();
     } catch (error) {
       console.log(error.message);
@@ -260,6 +266,33 @@ export default function Mealplans() {
                       ''
                     )}
                   </div>
+                  {eventChecked ? (
+                    <input
+                      type="text"
+                      className="form-control
+                            px-3
+                            py-1.5
+                            text-base
+                            font-normal
+                            text-white
+                            border border-solid border-gray-700
+                            rounded-lg
+                            transition
+                            ease-in-out
+                            m-0 focus:outline-none  focus-visible:ring-2  focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 bg-inherit flex-1"
+                      placeholder="Enter Event Name"
+                      value={eventName}
+                      onChange={(e) => setEventName(e.target.value)}
+                    ></input>
+                  ) : (
+                    <div
+                      className="text-[#9ca4ad] underline hover:text-blue-500 hover:cursor-pointer"
+                      onClick={() => setEventChecked(true)}
+                    >
+                      Make this an event?
+                    </div>
+                  )}
+
                   <button
                     className={`mt-3 mb-2 bg-[#0070f3] hover:bg-blue-700   text-white font-bold py-2 px-4 rounded w-[25%] `}
                     type="submit"

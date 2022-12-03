@@ -111,4 +111,15 @@ public class RecipeServiceImplementation implements RecipeService {
             PageRequest.of(page, pageSize)
         ).getContent();
     }
+
+    @Override
+    public void deleteRecipe(Long id) throws NameNotFoundException {
+        Recipe recipe = _recipeRepo.findById(id).get();
+
+        if (recipe == null) {
+            throw new NameNotFoundException("Recipe not found.");
+        }
+
+        _recipeRepo.delete(recipe);
+    }
 }

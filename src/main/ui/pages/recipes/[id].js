@@ -30,20 +30,22 @@ export default function Recipe() {
   }
 
   const handleDelete = async () => {
-    // const res = await fetch(`/api/recipes/${id}`, {
-    //   method: 'DELETE',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/recipes/${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-    // const data = await res.json();
-
-    if (true) {
+    if (res.ok) {
       setIsDeleteOpen(true);
       setTimeout(() => {
         router.push('/');
-      }, 3000);
+      }, 2500);
     }
   };
 
@@ -115,9 +117,6 @@ export default function Recipe() {
               onMouseOver={() => setShowPlusIcons(true)}
               onMouseLeave={() => setShowPlusIcons(false)}
             >
-              {/* TODO: Figure out a context for shopping list, 
-                        for each ingredient, add a plus icon -> check icon and when clicked add
-                        the ingredient to the value in context (have the context update the cookie value) */}
               {ingredients.length > 0 ? (
                 <div className="flex flex-col">
                   {ingredients.map((ingredient, index) => (
@@ -151,13 +150,13 @@ export default function Recipe() {
               </div>
             ))}
           </div>
-          {/* <button
+          <button
             type="button"
             onClick={openModal}
             className="rounded-md bg-[#9d3a3a]  px-8 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
           >
             Delete
-          </button> */}
+          </button>
 
           <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={closeModal}>

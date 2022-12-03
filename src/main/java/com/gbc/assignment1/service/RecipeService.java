@@ -29,4 +29,5 @@ public interface RecipeService {
         int page,
         int pageSize
     );
+    void deleteRecipe(Long id) throws NameNotFoundException;
 }

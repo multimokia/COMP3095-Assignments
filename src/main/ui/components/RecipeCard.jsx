@@ -5,23 +5,16 @@ import { getCookie } from 'cookies-next';
 
 export default function RecipeCard({ recipe, userId = null }) {
   const token = getCookie('jwt');
-  const fetcher = (url) => fetch(url).then((res) => res.json());
+
   const [isHearted, setIsHearted] = useState(false);
 
   const [showHeart, setShowHeart] = useState(false);
 
-  //use recipe.authorId to fetch author name
-
-  // make swr call with userId and recipeId to get hearted status, set isHearted to that(either gonna come back as true or false or undefined, set to false
-  // for the last 2 cases). When heart gets clicked, check state of isHearted, if true, make delete request, if false, make post request.
-
-  //   const { data: heartedRecipe, error: heartedRecipeError } = useSWR(
-  //     `/api/heartedrecipes?userid=1&recipeid=1`,
-  //     fetcher
-  //   );
-  const { data: heartedRecipe, error: heartedRecipeError } = useFetch(
-    `/api/favorites/${recipe.id}`
-  );
+  const {
+    data: heartedRecipe,
+    error: heartedRecipeError,
+    mutate,
+  } = useFetch(`/api/favorites/${recipe.id}`);
 
   useEffect(() => {
     if (heartedRecipe && userId) {
@@ -35,7 +28,7 @@ export default function RecipeCard({ recipe, userId = null }) {
 
   const handleHeartClick = async () => {
     if (isHearted) {
-      const res = await fetch(
+      await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/favorites/${recipe.id}`,
         {
           method: 'DELETE',
@@ -45,10 +38,10 @@ export default function RecipeCard({ recipe, userId = null }) {
           },
         }
       );
-      const data = await res.json();
+      mutate();
       setIsHearted(false);
     } else {
-      const res = await fetch(
+      await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/favorites/${recipe.id}`,
         {
           method: 'POST',
@@ -58,26 +51,17 @@ export default function RecipeCard({ recipe, userId = null }) {
           },
         }
       );
+      mutate();
       setIsHearted(true);
     }
   };
 
-  // useEffect(() => {
-  //   if (heartedRecipe) { // the check may be different, but this is the idea, if it returns a positive set it to true
-  //     setIsHearted(true);
-  //   }, [heartedRecipe]);
-
-  //in the user profile page , pass null (its a default param so just dont pass a prop for userId) for userid when displaying recipes, so that the heart doesn't show up
-
-  //view hearted recipes button == make a get request to the hearted table (many to many), get back an array of recipes, display them or false no entries returned
-
-  //  userId != null ,if userId is passed in, show the heart
   function handleShowHeart() {
     if (userId) {
       setShowHeart(true);
     }
   }
-  // userId != null ,if userId is passed in, show the heart
+
   function handleLeaveHeart() {
     if (userId) {
       setShowHeart(false);

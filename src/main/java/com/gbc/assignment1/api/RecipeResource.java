@@ -15,6 +15,7 @@ import javax.naming.NameNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -88,6 +89,41 @@ public class RecipeResource {
             RecipeDispForm recipe = _recipeService.getRecipeDisp(id);
             // Otherwise complete request
             return ResponseEntity.ok(recipe);
+        }
+
+        catch (NameNotFoundException ex) {
+            return new ResponseEntity<>("Not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/recipes/{id}")
+    public ResponseEntity<?> deleteRecipe(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id) {
+        // Verify user is logged in
+        if (!isValidJWT(token)) {
+            return new ResponseEntity<>("Unauthorized.", HttpStatus.UNAUTHORIZED);
+        }
+        AppUser user = _userService.getUserByUsername(TokenManager.getUsernameFromToken(token));
+        try {
+
+            List<AppUser> users = _userService.getAllUsers();
+
+            for (AppUser u : users) {
+                if (u.getFavorites().contains(_recipeService.getRecipe(id))) {
+                    u.getFavorites().remove(_recipeService.getRecipe(id));
+                    
+                }
+                if (u.getRecipes().contains(_recipeService.getRecipe(id))) {
+                    u.getRecipes().remove(_recipeService.getRecipe(id));
+                }
+                _userService.saveUser(u);
+            }
+
+            _recipeService.deleteRecipe(id);
+
+            _userService.saveUser(user);
+
+
+            return new ResponseEntity<>("Deleted.", HttpStatus.OK);
         }
 
         catch (NameNotFoundException ex) {

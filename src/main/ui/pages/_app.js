@@ -10,9 +10,9 @@ function MyApp({ Component, pageProps }) {
       ? false
       : true;
 
-  //TODO:FAVOURITES
-  //TODO: DELETE RECIPE
-  //TODO: EVENTS
+  //TODO: DELETE RECIPE, on delete cascade
+  //TODO: FIX PROFILE NAV
+  //TODO: delete event and mealplan
   //TODO: EXPORT SHOPPING LIST
 
   return (

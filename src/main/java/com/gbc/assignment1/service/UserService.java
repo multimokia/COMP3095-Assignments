@@ -8,6 +8,8 @@
 */
 package com.gbc.assignment1.service;
 
+import java.util.List;
+
 import javax.security.auth.login.CredentialException;
 
 import org.springframework.security.core.AuthenticationException;
@@ -24,4 +26,5 @@ public interface UserService {
     void addRecipeToUser(Long userId, Long recipeId);
     AppUser getUserByUsername(String username);
     AppUser getUser(Long id);
+    List<AppUser> getAllUsers();
 }

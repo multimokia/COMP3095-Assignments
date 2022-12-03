@@ -10,6 +10,7 @@ package com.gbc.assignment1.service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.security.auth.login.CredentialException;
 import javax.transaction.Transactional;
@@ -43,6 +44,11 @@ public class UserServiceImplementation implements UserService {
     @Override
     public Recipe saveRecipe(Recipe recipe) {
         return _recipeRepo.save(recipe);
+    }
+
+    @Override
+    public List<AppUser> getAllUsers() {
+        return _userRepo.findAll();
     }
 
     @Override
