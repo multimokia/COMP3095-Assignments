@@ -10,11 +10,6 @@ function MyApp({ Component, pageProps }) {
       ? false
       : true;
 
-  //TODO: DELETE RECIPE, on delete cascade
-  //TODO: FIX PROFILE NAV
-  //TODO: delete event and mealplan
-  //TODO: EXPORT SHOPPING LIST
-
   return (
     <>
       <ShoppingListProvider>
