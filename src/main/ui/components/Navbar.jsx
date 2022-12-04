@@ -59,26 +59,35 @@ export default function Navbar() {
     <nav className="flex justify-center items-center mt-10 mx-auto relative ">
       <div id="nav-links" className="  flex justify-center gap-11 ml-64   ">
         <Link href="/">
-          <a className="bg-[#0070f3] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ">
+          <a
+            onClick={() => setShowMenu(false)}
+            className="bg-[#0070f3] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded "
+          >
             All Recipes
           </a>
         </Link>
         <Link href="/recipes/create">
-          <a className="bg-[#0070f3] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <a
+            className="bg-[#0070f3] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => setShowMenu(false)}
+          >
             Create Recipe
           </a>
         </Link>
         <Link href="/mealplans">
-          <a className="bg-[#0070f3] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <a
+            className="bg-[#0070f3] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => setShowMenu(false)}
+          >
             Plan Meal
           </a>
         </Link>
       </div>
 
-      <div className="flex items-center relative ml-10 xl:left-52 lg:left-32 space-x-5  ">
+      <div className="flex items-center relative ml-20 xl:left-52 lg:left-32 space-x-5 mt-10   ">
         <div id="icon" className="flex items-center ">
           <div className="hover:cursor-pointer">
-            <div className="flex flex-col relative ">
+            <div className="flex flex-col relative h-24 ">
               <div className="flex items-center">
                 {shoppingListCount > 0 && (
                   <div className="mr-1 ">{shoppingListCount}</div>
@@ -91,6 +100,7 @@ export default function Navbar() {
                     strokeWidth={1.5}
                     stroke="currentColor"
                     className="w-7 h-7 mr-5"
+                    onClick={() => setShowMenu(false)}
                   >
                     <path
                       strokeLinecap="round"
@@ -134,45 +144,45 @@ export default function Navbar() {
                   </a>
                 </div>
               </div>
-              {showMenu && (
-                <div id="tsalkbubble" className="relative top-10 z-10 ">
-                  <div className="flex flex-col items-center">
-                    <div className="flex-col items-center">
-                      <div>
-                        <Link href="/profile">
-                          <a className="hover:cursor-pointer hover:text-blue-500">
-                            Profile
-                          </a>
-                        </Link>
-                      </div>
-                      <div className="mt-1">
-                        <Link href="/eventplans">
-                          <a className="hover:cursor-pointer hover:text-blue-500">
-                            Events
-                          </a>
-                        </Link>
-                      </div>
-                      <div
-                        onClick={() => logOut()}
-                        className="mt-1 hover:text-blue-500"
-                      >
-                        Log out
+              <div className="rounded bg-[#54575aae] relative top-6 ">
+                {showMenu && (
+                  <div id="tsalkbubble" className="z-10 py-2">
+                    <div className="flex flex-col items-center">
+                      <div className="flex-col items-center">
+                        <div>
+                          <Link href="/profile">
+                            <a
+                              className="hover:cursor-pointer hover:text-blue-500"
+                              onClick={() => setShowMenu(false)}
+                            >
+                              Profile
+                            </a>
+                          </Link>
+                        </div>
+                        <div className="mt-1">
+                          <Link href="/eventplans">
+                            <a
+                              className="hover:cursor-pointer hover:text-blue-500"
+                              onClick={() => setShowMenu(false)}
+                            >
+                              Events
+                            </a>
+                          </Link>
+                        </div>
+                        <div
+                          onClick={() => logOut()}
+                          className="mt-1 hover:text-blue-500"
+                        >
+                          Log out
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
-        {/* <div id="logout">
-          <p
-            className="bg-[#0070f3] hover:bg-blue-700 hover:cursor-pointer text-white font-bold py-2 px-4 rounded"
-            onClick={() => logOut()}
-          >
-            Logout
-          </p>
-        </div> */}
       </div>
     </nav>
   );
